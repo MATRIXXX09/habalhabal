@@ -1,3 +1,62 @@
+:root {
+    --primary-color: #00B14F;
+    --secondary-color: #2D3748;
+    --accent-color: #FFC107;
+}
+
+/* General Styles */
 body {
-    background-color: skyblue;
+    font-family: 'Segoe UI', sans-serif;
+    padding-top: 76px;
+    background-color: rgb(194, 65, 65);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('../images/hero-bg.jpg') center/cover;
+    min-height: 600px;
+    color: white;
+    padding: 100px 0;
+}
+
+/* Services Cards */
+.service-card {
+    border: none;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+/* Custom Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+}
+
+.btn-primary:hover {
+    background-color: darken(var(--primary-color), 10%);
+}
+
+/* Animations */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 400px;
+        padding: 60px 0;
+    }
 }

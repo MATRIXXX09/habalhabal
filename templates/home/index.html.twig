@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Habal-Habal{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="hero-section d-flex align-items-center">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4 fade-in">Fast & Reliable Delivery Services</h1>
+            <p class="lead mb-5 fade-in">Your trusted partner for deliveries and moving services</p>
+            <a href="#book" class="btn btn-primary btn-lg fade-in">Book Now</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Our Services</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card service-card">
+                        <img src="{{ asset('images/delivery.png') }}" class="card-img-top" alt="Delivery">
+                        <div class="card-body">
+                            <h5 class="card-title">Express Delivery</h5>
+                            <p class="card-text">Same-day delivery services for your urgent needs.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more service cards -->
+            </div>
+        </div>
+    </section>
+{% endblock %}
