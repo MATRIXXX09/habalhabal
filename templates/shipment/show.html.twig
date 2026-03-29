@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shipment{% endblock %}
+
+{% block body %}
+    <h1>Shipment</h1>
+
+    <table id="ridersTable" class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ shipment.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_shipment_index') }}">back to list</a>
+    <a href="{{ path('app_shipment_edit', {'id': shipment.id}) }}">edit</a>
+
+    {{ include('shipment/_delete_form.html.twig') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            // Count only actual data rows, not empty state rows (those with colspan)
+            var dataRows = $('#ridersTable tbody tr').not(':has(td[colspan])').length;
+            if ($.fn.DataTable && dataRows > 0) {
+                console.log('DataTables loaded successfully');
+                $('#ridersTable').DataTable({
+                    pageLength: 10,
+                    order: [[0, 'asc']],
+                    language: {
+                        search: "Filter records:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ riders",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous"
+                        },
+                        emptyTable: "No riders found."
+                    },
+                    dom: '<"top flex items-center justify-between mb-4"lf>rt<"bottom flex items-center justify-between mt-4"ip>'
+                });
+            } else {
+                console.error('DataTables not loaded!');
+            }
+        });
+    </script>
+{% endblock %}

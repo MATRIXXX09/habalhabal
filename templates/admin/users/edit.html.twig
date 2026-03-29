@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block body %}
+    <div class="min-h-full">
+        <!-- Admin Sidebar -->
+        {{ include('admin/_sidebar.html.twig') }}
+
+        <!-- Main Content -->
+        <main class="pl-72">
+            <div class="px-8 py-6">
+                <div class="sm:flex sm:items-center">
+                    <div class="sm:flex-auto">
+                        <h1 class="text-2xl font-semibold text-white">Edit User</h1>
+                        <p class="mt-2 text-sm text-gray-300">Edit user details and roles.</p>
+                    </div>
+                    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                        <a href="{{ path('app_admin_users') }}" class="block rounded-md bg-indigo-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-400">Back to Users</a>
+                    </div>
+                </div>
+
+                <div class="mt-8 max-w-xl">
+                    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                        <div>
+                            {{ form_label(form.email, 'Email address', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            <div class="mt-2">
+                                {{ form_widget(form.email) }}
+                                {{ form_errors(form.email) }}
+                            </div>
+                        </div>
+
+                        {% if form.plainPassword is defined %}
+                            <div>
+                                {{ form_label(form.plainPassword, 'New Password', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                                <div class="mt-2">
+                                    {{ form_widget(form.plainPassword) }}
+                                    {{ form_errors(form.plainPassword) }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            {{ form_label(form.roles, 'User Type', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            <div class="mt-2">
+                                <div class="space-y-3">
+                                    {% for choice in form.roles %}
+                                        <div class="relative flex items-start">
+                                            <div class="flex h-6 items-center">
+                                                {{ form_widget(choice, {'attr': {
+                                                    'class': 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600'
+                                                }}) }}
+                                            </div>
+                                            <div class="ml-3">
+                                                {{ form_label(choice, null, {
+                                                    'label_attr': {
+                                                        'class': 'text-sm font-medium text-gray-300'
+                                                    }
+                                                }) }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {{ form_errors(form.roles) }}
+                            </div>
+                        </div>
+
+                        <div class="relative flex items-start">
+                            <div class="flex h-6 items-center">
+                                {{ form_widget(form.isVerified, {'attr': {
+                                    'class': 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600'
+                                }}) }}
+                            </div>
+                            <div class="ml-3">
+                                {{ form_label(form.isVerified, 'Verified User', {
+                                    'label_attr': {
+                                        'class': 'text-sm font-medium text-gray-300'
+                                    }
+                                }) }}
+                            </div>
+                            {{ form_errors(form.isVerified) }}
+                        </div>
+
+                        <div>
+                            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                Save Changes
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock %}

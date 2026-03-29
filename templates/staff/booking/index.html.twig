@@ -1,0 +1,175 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Bookings - Staff Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    {{ include('staff/_sidebar.html.twig') }}
+
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header Section -->
+            <div class="mb-12">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h1 class="text-5xl font-bold text-white">Bookings</h1>
+                        <p class="text-indigo-300 mt-2 text-lg">Manage customer delivery bookings</p>
+                    </div>
+                    <a href="{{ path('staff_booking_new') }}" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        New Booking
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-4 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <input type="text" placeholder="Search by customer name..." id="searchInput" class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400">
+                    <select id="statusFilter" class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_transit">In Transit</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select id="typeFilter" class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white">
+                        <option value="">All Types</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="pickup">Pickup</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Bookings Table -->
+            {% if bookings %}
+                <div class="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 overflow-hidden shadow-xl">
+                    <table class="w-full">
+                        <thead class="bg-white/5 border-b border-white/20">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">ID</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Customer</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Type</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Pickup</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Delivery</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Status</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Driver</th>
+                                <th class="px-6 py-4 text-left text-indigo-200 font-semibold">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                                <tr class="border-b border-white/10 hover:bg-white/5 transition" data-type="{{ booking.bookingType }}" data-status="{{ booking.status }}">
+                                    <td class="px-6 py-4 text-white font-mono text-sm">#{{ booking.id }}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-white font-medium">{{ booking.customerName }}</div>
+                                        <div class="text-indigo-300 text-sm">{{ booking.customerPhone }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold {% if booking.bookingType == 'delivery' %}bg-blue-500/20 text-blue-200{% else %}bg-purple-500/20 text-purple-200{% endif %}">
+                                            {{ booking.bookingType|capitalize }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-indigo-200 text-sm">
+                                        <div>{{ booking.pickupAddress|slice(0, 30) }}{% if booking.pickupAddress|length > 30 %}...{% endif %}</div>
+                                        <div class="text-xs text-indigo-400">{{ booking.requestedPickupTime|date('M d, H:i') }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-indigo-200 text-sm">
+                                        <div>{{ booking.deliveryAddress|slice(0, 30) }}{% if booking.deliveryAddress|length > 30 %}...{% endif %}</div>
+                                        {% if booking.requestedDeliveryTime %}
+                                            <div class="text-xs text-indigo-400">{{ booking.requestedDeliveryTime|date('M d, H:i') }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                                            {% if booking.status == 'pending' %}bg-yellow-500/20 text-yellow-200
+                                            {% elseif booking.status == 'confirmed' %}bg-blue-500/20 text-blue-200
+                                            {% elseif booking.status == 'assigned' %}bg-cyan-500/20 text-cyan-200
+                                            {% elseif booking.status == 'in_transit' %}bg-orange-500/20 text-orange-200
+                                            {% elseif booking.status == 'completed' %}bg-green-500/20 text-green-200
+                                            {% elseif booking.status == 'cancelled' %}bg-red-500/20 text-red-200
+                                            {% endif %}">
+                                            {{ booking.status|replace({'_': ' '})|capitalize }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-indigo-200 text-sm">
+                                        {% if booking.assignedDriver %}
+                                            <div class="font-medium">{{ booking.assignedDriver.firstName }} {{ booking.assignedDriver.lastName }}</div>
+                                            <div class="text-xs text-indigo-400">{{ booking.assignedDriver.plateNumber }}</div>
+                                        {% else %}
+                                            <span class="text-indigo-400 italic">Unassigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex gap-2">
+                                            <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="px-3 py-1 bg-indigo-600/20 text-indigo-200 rounded hover:bg-indigo-600/40 transition text-xs font-semibold">
+                                                View
+                                            </a>
+                                            {% if booking.status == 'pending' %}
+                                                <a href="{{ path('staff_booking_edit', {id: booking.id}) }}" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold">
+                                                    Edit
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-12 text-center">
+                    <svg class="w-16 h-16 text-indigo-300 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="text-2xl font-bold text-white mb-2">No Bookings Yet</h3>
+                    <p class="text-indigo-300 mb-6">Create a new booking to get started</p>
+                    <a href="{{ path('staff_booking_new') }}" class="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition">
+                        Create First Booking
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<script>
+    // Search and filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const rows = document.querySelectorAll('tbody tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedStatus = statusFilter.value;
+        const selectedType = typeFilter.value;
+
+        rows.forEach(row => {
+            let show = true;
+
+            if (searchTerm) {
+                show = row.textContent.toLowerCase().includes(searchTerm);
+            }
+
+            if (show && selectedStatus) {
+                show = row.dataset.status === selectedStatus;
+            }
+
+            if (show && selectedType) {
+                show = row.dataset.type === selectedType;
+            }
+
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+    typeFilter.addEventListener('change', filterTable);
+</script>
+{% endblock %}

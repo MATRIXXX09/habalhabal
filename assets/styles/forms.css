@@ -1,0 +1,57 @@
+/* ========================================
+   FORM & TABLE UTILITIES
+   ======================================== */
+
+/* Inline forms (for delete buttons) */
+.inline-form {
+    display: inline;
+}
+
+/* Table utilities */
+.table-full-width {
+    width: 100%;
+}
+
+.table-auto-width {
+    width: auto;
+}
+
+/* Delete button styling */
+.delete-form-inline {
+    display: inline;
+}
+
+.delete-btn-inline {
+    display: inline;
+}
+
+/* ========================================
+   SELECT DROPDOWN STYLING
+   ======================================== */
+
+/* Base select element styling */
+select {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* Style for all options */
+select option {
+    background-color: #1e293b;
+    color: white;
+}
+
+/* Style for selected option */
+select option:checked {
+    background-color: #4f46e5;
+    color: white;
+}
+.booking-type-select {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgb(17, 7, 7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    
+}

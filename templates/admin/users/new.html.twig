@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add User{% endblock %}
+
+{% block body %}
+<div class="min-h-full">
+    {{ include('admin/_sidebar.html.twig') }}
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-2xl font-semibold text-white">Add User</h1>
+                    <p class="mt-2 text-sm text-gray-400">Fill in the details to create a new user.</p>
+                </div>
+                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                    <a href="{{ path('app_admin_users') }}" class="block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-gray-500">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 flow-root bg-gray-800 px-6 py-8 rounded-lg">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
+                        <div>
+                            {{ form_label(form.email, 'Email', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.email, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+                        <div>
+                            {{ form_label(form.plainPassword, 'Password', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.plainPassword, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+                        <div>
+                            {{ form_label(form.roles, 'User Type', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.roles, {'attr': {'class': 'mt-2 space-y-3'}}) }}
+                            {{ form_errors(form.roles) }}
+                        </div>
+                    </div>
+                    <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <a href="{{ path('app_admin_users') }}" class="rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-500">Cancel</a>
+                        <button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Add User</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

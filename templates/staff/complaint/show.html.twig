@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Complaint - Staff{% endblock %}
+
+{% block body %}
+<div class="container mx-auto py-8 px-4 max-w-2xl">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Complaint #{{ complaint.id }}</h1>
+        <a href="{{ path('staff_complaint_index') }}" class="text-gray-600 hover:text-gray-800">← Back</a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <p class="text-sm text-gray-600">Customer Name</p>
+                <p class="text-lg font-semibold text-gray-900">{{ complaint.customerName }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-600">Status</p>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                    {{ complaint.status ?? 'Open' }}
+                </span>
+            </div>
+            <div class="col-span-2">
+                <p class="text-sm text-gray-600">Message</p>
+                <p class="text-gray-900 mt-1">{{ complaint.message }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-600">Created</p>
+                <p class="text-gray-900">{{ complaint.createdAt|date('M d, Y H:i') }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-600">Created By</p>
+                <p class="text-gray-900">{{ complaint.createdBy.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex space-x-4">
+        <a href="{{ path('staff_complaint_edit', {'id': complaint.id}) }}" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded">
+            Edit
+        </a>
+        <form class="inline-form" method="post" action="{{ path('staff_complaint_delete', {'id': complaint.id}) }}" onsubmit="return confirm('Are you sure?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ complaint.id) }}">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">
+                Delete
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Users{% endblock %}
+
+{% block body %}
+ <div class="min-h-full">
+        
+<div class="min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <!-- Admin Sidebar -->
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <!-- Main Content -->
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header Section -->
+            <div class="list-animate mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white mb-2">Users Management</h1>
+                        <p class="text-gray-400 flex items-center gap-2">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Complete list of all registered users in the system
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_admin_users_new') }}" class="flex items-center gap-2 px-4 py-2 gradient-bg hover:opacity-90 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Add User
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Flash Messages -->
+                {% for message in app.flashes('success') %}
+                    <div class="alert-animate rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 mt-6 border border-green-500/30 shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="text-sm font-medium text-green-400">{{ message }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('error') %}
+                    <div class="alert-animate rounded-xl bg-gradient-to-r from-red-500/10 to-pink-500/10 p-4 mt-6 border border-red-500/30 shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0">
+                                <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="text-sm font-medium text-red-400">{{ message }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Users List Container -->
+            <div id="users-list" class="list-animate">
+                {{ include('admin/users/_list.html.twig') }}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

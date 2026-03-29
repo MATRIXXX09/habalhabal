@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Complaint{% endblock %}
+
+{% block body %}
+<div class="min-h-full">
+    {{ include('admin/_sidebar.html.twig') }}
+    <main class="pl-72">
+        <div class="px-8 py-6 max-w-xl mx-auto">
+            <h1 class="text-2xl font-semibold text-white mb-6">Edit Complaint</h1>
+            <form method="post">
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-1">Customer Name</label>
+                    <input type="text" name="customerName" value="{{ complaint.customerName }}" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-white" required />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-1">Message</label>
+                    <textarea name="message" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-white" required>{{ complaint.message }}</textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-1">Status</label>
+                    <select name="status" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-white [&_option]:bg-slate-800 [&_option]:text-white">
+                        <option value="pending"{% if complaint.status == 'pending' %} selected{% endif %}>Pending</option>
+                        <option value="done"{% if complaint.status == 'done' %} selected{% endif %}>Done</option>
+                    </select>
+                </div>
+                <button type="submit" class="rounded-md bg-indigo-500 px-4 py-2 text-white font-semibold hover:bg-indigo-400">Save</button>
+                <a href="{{ path('app_admin_complaints') }}" class="ml-4 text-gray-400 hover:text-white">Cancel</a>
+            </form>
+        </div>
+    </main>
+</div>
+{% endblock %}

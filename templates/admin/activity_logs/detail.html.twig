@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activity Log Details - Admin Panel{% endblock %}
+
+{% block body %}
+<div class="min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header Section -->
+            <div class="list-animate mb-8">
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('app_admin_activity_logs') }}" class="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-gray-400 hover:text-white transition-colors">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-3xl font-bold text-white mb-2">Activity Log Details</h1>
+                        <p class="text-gray-400 flex items-center gap-2">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Complete activity information (Read-only)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Details Card -->
+            <div class="list-animate overflow-hidden rounded-xl bg-gray-800/50 shadow-2xl border border-gray-700/50 backdrop-blur-sm">
+                <div class="p-8 text-white">
+                    <!-- User ID -->
+                    <div class="mb-6 pb-6 border-b border-gray-700/50">
+                        <label class="text-gray-400 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                            </svg>
+                            User ID
+                        </label>
+                        <p class="text-white text-lg font-semibold mt-3">{{ log.userId }}</p>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="mb-6 pb-6 border-b border-gray-700/50">
+                        <label class="text-gray-400 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Username
+                        </label>
+                        <p class="text-white text-lg font-semibold mt-3">{{ log.username }}</p>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="mb-6 pb-6 border-b border-gray-700/50">
+                        <label class="text-gray-400 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Role
+                        </label>
+                        <div class="mt-3">
+                            <span class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold 
+                                {% if 'ROLE_ADMIN' in log.role %}
+                                    bg-red-500/20 text-red-300 ring-1 ring-red-500/30
+                                {% elseif 'ROLE_STAFF' in log.role %}
+                                    bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30
+                                {% else %}
+                                    bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30
+                                {% endif %}
+                            ">
+                                {{ log.role|replace({'ROLE_': ''})|replace({', ': ', '}) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="mb-6 pb-6 border-b border-gray-700/50">
+                        <label class="text-gray-400 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Action
+                        </label>
+                        <div class="mt-3">
+                            <span class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold
+                                {% if 'CREATE' in log.action %}
+                                    bg-green-500/20 text-green-300 ring-1 ring-green-500/30
+                                {% elseif 'UPDATE' in log.action %}
+                                    bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30
+                                {% elseif 'DELETE' in log.action %}
+                                    bg-red-500/20 text-red-300 ring-1 ring-red-500/30
+                                {% elseif 'LOGIN' in log.action %}
+                                    bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30
+                                {% elseif 'LOGOUT' in log.action %}
+                                    bg-yellow-500/20 text-yellow-300 ring-1 ring-yellow-500/30
+                                {% else %}
+                                    bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30
+                                {% endif %}
+                            ">
+                                {{ log.action }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Target Data -->
+                    <div class="mb-6 pb-6 border-b border-gray-700/50">
+                        <label class="text-gray-400 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Target Data
+                        </label>
+                        <div class="bg-gray-900/50 rounded-lg p-4 mt-3 border border-gray-700 font-mono text-sm text-gray-300 break-words whitespace-pre-wrap">
+                            {{ log.targetData }}
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div>
+                        <label class="text-gray-400 text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                            <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Date & Time
+                        </label>
+                        <p class="text-white text-lg font-semibold mt-3">{{ log.dateTime|date('M d, Y - H:i:s') }}</p>
+                        <p class="text-gray-400 text-sm mt-1">{{ log.dateTime|date('l, F j, Y') }} at {{ log.dateTime|date('g:i A') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Read-Only Notice -->
+            <div class="list-animate mt-8 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center gap-3">
+                <svg class="h-5 w-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" />
+                </svg>
+                <p class="text-blue-300 text-sm font-medium">This activity log is read-only and cannot be modified</p>
+            </div>
+
+            <!-- Back Button -->
+            <div class="list-animate mt-8">
+                <a href="{{ path('app_admin_activity_logs') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-white rounded-lg transition-all duration-200 font-semibold">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Activity Logs
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

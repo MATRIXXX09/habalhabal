@@ -1,0 +1,206 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Edit Booking - Staff Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    {{ include('staff/_sidebar.html.twig') }}
+
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header Section -->
+            <div class="mb-12">
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="text-indigo-400 hover:text-indigo-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-5xl font-bold text-white">Edit Booking #{{ booking.id }}</h1>
+                        <p class="text-indigo-300 mt-2">Update delivery details</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form Section -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-8 shadow-xl">
+                        {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
+
+                        <!-- Booking Type -->
+                        <div class="space-y-2">
+                            <label class="block  text-white text-indigo-200 font-semibold">{{ form_label(form.bookingType) }}</label>
+                            {{ form_widget(form.bookingType, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20  border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                            {{ form_errors(form.bookingType) }}
+                        </div>
+
+                        <!-- Customer Information -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.customerName) }}</label>
+                                {{ form_widget(form.customerName, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                {{ form_errors(form.customerName) }}
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.customerPhone) }}</label>
+                                {{ form_widget(form.customerPhone, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                {{ form_errors(form.customerPhone) }}
+                            </div>
+                        </div>
+
+                        <!-- Pickup Information -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Pickup Information</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.pickupAddress) }}</label>
+                                    {{ form_widget(form.pickupAddress, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                    {{ form_errors(form.pickupAddress) }}
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.requestedPickupTime) }}</label>
+                                    {{ form_widget(form.requestedPickupTime, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400'}}) }}
+                                    {{ form_errors(form.requestedPickupTime) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Information -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Delivery Information</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.deliveryAddress) }}</label>
+                                    {{ form_widget(form.deliveryAddress, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                    {{ form_errors(form.deliveryAddress) }}
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.requestedDeliveryTime) }}</label>
+                                    {{ form_widget(form.requestedDeliveryTime, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400'}}) }}
+                                    <p class="text-xs text-indigo-400">Optional</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parcel Information -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Parcel Details</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.parcelType) }}</label>
+                                    {{ form_widget(form.parcelType, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                                    {{ form_errors(form.parcelType) }}
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.parcelWeight) }}</label>
+                                    {{ form_widget(form.parcelWeight, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="mt-4 space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.parcelDescription) }}</label>
+                                {{ form_widget(form.parcelDescription, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                            </div>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Additional Options</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.priorityLevel) }}</label>
+                                    {{ form_widget(form.priorityLevel, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.specialInstructions) }}</label>
+                                {{ form_widget(form.specialInstructions, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400', 'rows': '3'}}) }}
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex gap-4 pt-6 border-t border-white/10">
+                            <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition shadow-lg hover:shadow-xl">
+                                Update Booking
+                            </button>
+                            <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-3 rounded-lg transition border border-white/20 text-center">
+                                Cancel
+                            </a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="space-y-6">
+                    <!-- Current Status -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">📊 Current Status</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <p class="text-indigo-300">Status</p>
+                                <span class="px-3 py-1 rounded-full font-semibold text-xs bg-yellow-500/20 text-yellow-200">
+                                    {{ booking.status|replace({'_': ' '})|capitalize }}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-indigo-300">Created</p>
+                                <p class="text-white text-sm">{{ booking.createdAt|date('M d, H:i') }}</p>
+                            </div>
+                            {% if booking.assignedDriver %}
+                                <div class="flex justify-between items-center">
+                                    <p class="text-indigo-300">Driver</p>
+                                    <p class="text-white text-sm">{{ booking.assignedDriver.firstName }} {{ booking.assignedDriver.lastName }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Quick Tips -->
+                    <div class="bg-blue-500/10 rounded-lg border border-blue-400/30 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">💡 Tips</h3>
+                        <ul class="space-y-2 text-sm text-indigo-200">
+                            <li>✓ Update addresses if location changed</li>
+                            <li>✓ Adjust pickup/delivery times as needed</li>
+                            <li>✓ Add special instructions if necessary</li>
+                            <li>✓ Changes are saved immediately</li>
+                        </ul>
+                    </div>
+
+                    <!-- Booking Info -->
+                    <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-400/30 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">📋 Booking Info</h3>
+                        <div class="space-y-2 text-sm text-indigo-200">
+                            <div class="flex justify-between">
+                                <span>Booking ID:</span>
+                                <span class="font-mono">#{{ booking.id }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Type:</span>
+                                <span>{{ booking.bookingType|capitalize }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Customer:</span>
+                                <span>{{ booking.customerName }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

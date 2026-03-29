@@ -1,0 +1,279 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activity Logs - Admin Panel{% endblock %}
+
+{% block body %}
+<div class="min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header Section -->
+            <div class="list-animate mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white mb-2">Activity Logs</h1>
+                        <p class="text-gray-400 flex items-center gap-2">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Complete audit trail of all system activities (Read-only)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters Card -->
+            <div class="list-animate bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 mb-8 shadow-2xl">
+                <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Filter Logs
+                </h2>
+                <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Username Filter -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-semibold mb-2">Username</label>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            value="{{ username }}"
+                            placeholder="Search email..."
+                            class="w-full px-3 py-2 rounded-lg bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                        >
+                    </div>
+
+                    <!-- Action Filter -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-semibold mb-2">Action</label>
+                        <select 
+                            name="action"
+                            class="w-full px-3 py-2 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm [&_option]:bg-gray-700 [&_option]:text-white"
+                        >
+                            <option value="">All Actions</option>
+                            {% for act in actions %}
+                                <option value="{{ act }}" {% if act == action %}selected{% endif %}>{{ act }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date From -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-semibold mb-2">From Date</label>
+                        <input 
+                            type="date" 
+                            name="dateFrom"
+                            value="{{ dateFrom }}"
+                            class="w-full px-3 py-2 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                        >
+                    </div>
+
+                    <!-- Date To -->
+                    <div>
+                        <label class="block text-gray-300 text-sm font-semibold mb-2">To Date</label>
+                        <input 
+                            type="date" 
+                            name="dateTo"
+                            value="{{ dateTo }}"
+                            class="w-full px-3 py-2 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                        >
+                    </div>
+
+                    <!-- Search Button -->
+                    <div class="flex items-end gap-2">
+                        <button 
+                            type="submit"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-2 gradient-bg hover:opacity-90 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                        >
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            Filter
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Clear Filters -->
+                {% if username or action or dateFrom or dateTo %}
+                    <div class="mt-4">
+                        <a href="{{ path('app_admin_activity_logs') }}" class="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 text-sm font-medium">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Clear all filters
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Results Summary -->
+            <div class="mb-4 text-gray-400 text-sm flex items-center gap-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Showing <span class="font-semibold text-white">{{ logs|length }}</span> of <span class="font-semibold text-white">{{ totalCount }}</span> logs
+            </div>
+
+            <!-- Logs Table -->
+            <div class="list-animate overflow-hidden rounded-xl bg-gray-800/50 shadow-2xl border border-gray-700/50 backdrop-blur-sm">
+                <div class="overflow-x-auto p-6 text-white">
+                    <table class="min-w-full text-white table-full-width">
+                        <thead class="bg-gray-800/80">
+                            <tr>
+                                <th scope="col" class="py-4 pl-6 pr-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                                        </svg>
+                                        Date & Time
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-3 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Username
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-3 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Role
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-3 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                        Action
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-3 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Target Data
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-3 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                        Details
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700/30">
+                            {% if logs|length > 0 %}
+                                {% for log in logs %}
+                                    <tr class="hover:bg-gray-700/20 transition duration-150">
+                                        <td class="pl-6 pr-3 py-4 whitespace-nowrap text-sm text-gray-300">
+                                            {{ log.dateTime|date('M d, Y H:i:s') }}
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">
+                                            {{ log.username }}
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm">
+                                            <span class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold 
+                                                {% if 'ROLE_ADMIN' in log.role %}
+                                                    bg-red-500/20 text-red-300 ring-1 ring-red-500/30
+                                                {% elseif 'ROLE_STAFF' in log.role %}
+                                                    bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30
+                                                {% else %}
+                                                    bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30
+                                                {% endif %}
+                                            ">
+                                                {{ log.role|replace({'ROLE_': ''})|replace({', ': ', '}) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm">
+                                            <span class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold
+                                                {% if 'CREATE' in log.action %}
+                                                    bg-green-500/20 text-green-300 ring-1 ring-green-500/30
+                                                {% elseif 'UPDATE' in log.action %}
+                                                    bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30
+                                                {% elseif 'DELETE' in log.action %}
+                                                    bg-red-500/20 text-red-300 ring-1 ring-red-500/30
+                                                {% elseif 'LOGIN' in log.action %}
+                                                    bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30
+                                                {% elseif 'LOGOUT' in log.action %}
+                                                    bg-yellow-500/20 text-yellow-300 ring-1 ring-yellow-500/30
+                                                {% else %}
+                                                    bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30
+                                                {% endif %}
+                                            ">
+                                                {{ log.action }}
+                                            </span>
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-400 max-w-xs truncate" title="{{ log.targetData }}">
+                                            {{ log.targetData }}
+                                        </td>
+                                        <td class="px-3 py-4 whitespace-nowrap text-sm">
+                                            <a href="{{ path('app_admin_activity_log_detail', {id: log.id}) }}" 
+                                               class="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                                                View
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <svg class="h-12 w-12 text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                            </svg>
+                                            <p class="text-gray-400 text-lg font-medium">No logs found</p>
+                                            <p class="text-gray-500 text-sm">Try adjusting your filters</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if totalPages > 1 %}
+                <div class="flex justify-center items-center gap-2 mt-8">
+                    {% if page > 1 %}
+                        <a href="?page=1{% if username %}&username={{ username }}{% endif %}{% if action %}&action={{ action }}{% endif %}{% if dateFrom %}&dateFrom={{ dateFrom }}{% endif %}{% if dateTo %}&dateTo={{ dateTo }}{% endif %}"
+                           class="px-3 py-2 rounded-lg bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-white transition-colors">
+                            ← First
+                        </a>
+                        <a href="?page={{ page - 1 }}{% if username %}&username={{ username }}{% endif %}{% if action %}&action={{ action }}{% endif %}{% if dateFrom %}&dateFrom={{ dateFrom }}{% endif %}{% if dateTo %}&dateTo={{ dateTo }}{% endif %}"
+                           class="px-3 py-2 rounded-lg bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-white transition-colors">
+                            ← Prev
+                        </a>
+                    {% endif %}
+
+                    <span class="text-gray-300 text-sm font-medium">Page {{ page }} of {{ totalPages }}</span>
+
+                    {% if page < totalPages %}
+                        <a href="?page={{ page + 1 }}{% if username %}&username={{ username }}{% endif %}{% if action %}&action={{ action }}{% endif %}{% if dateFrom %}&dateFrom={{ dateFrom }}{% endif %}{% if dateTo %}&dateTo={{ dateTo }}{% endif %}"
+                           class="px-3 py-2 rounded-lg bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-white transition-colors">
+                            Next →
+                        </a>
+                        <a href="?page={{ totalPages }}{% if username %}&username={{ username }}{% endif %}{% if action %}&action={{ action }}{% endif %}{% if dateFrom %}&dateFrom={{ dateFrom }}{% endif %}{% if dateTo %}&dateTo={{ dateTo }}{% endif %}"
+                           class="px-3 py-2 rounded-lg bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-white transition-colors">
+                            Last →
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+{% endblock %}

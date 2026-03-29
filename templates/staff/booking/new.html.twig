@@ -1,0 +1,209 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Create New Booking - Staff Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    {{ include('staff/_sidebar.html.twig') }}
+
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header Section -->
+            <div class="mb-12">
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('staff_booking_index') }}" class="text-indigo-400 hover:text-indigo-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-5xl font-bold text-white">Create New Booking</h1>
+                        <p class="text-indigo-300 mt-2">Fill in the delivery details and check driver availability</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Form Section -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-8 shadow-xl">
+                        {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate', 'id': 'bookingForm'}}) }}
+
+                        <!-- Form Errors -->
+                        {% if form.vars.errors|length > 0 %}
+                            <div class="bg-red-500/20 border border-red-400/50 rounded-lg p-4 mb-6">
+                                <div class="text-red-200 font-semibold mb-2">Form Errors:</div>
+                                <ul class="text-red-300 text-sm space-y-1">
+                                    {% for error in form.vars.errors %}
+                                        <li>• {{ error.message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        <!-- Booking Type -->
+                        <div class="space-y-2">
+                            <label class="block text-indigo-200 font-semibold">{{ form_label(form.bookingType) }}</label>
+                            {{ form_widget(form.bookingType, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white', 'id': 'bookingTypeSelect'}}) }}
+                            {{ form_errors(form.bookingType) }}
+                        </div>
+
+                        <!-- Customer Information -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.customerName) }}</label>
+                                {{ form_widget(form.customerName, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                {{ form_errors(form.customerName) }}
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.customerPhone) }}</label>
+                                {{ form_widget(form.customerPhone, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                {{ form_errors(form.customerPhone) }}
+                            </div>
+                        </div>
+
+                        <!-- Pickup Information -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Pickup Information</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.pickupAddress) }}</label>
+                                    {{ form_widget(form.pickupAddress, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400', 'id': 'pickupAddress'}}) }}
+                                    {{ form_errors(form.pickupAddress) }}
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.requestedPickupTime) }}</label>
+                                    {{ form_widget(form.requestedPickupTime, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400', 'id': 'pickupTime'}}) }}
+                                    {{ form_errors(form.requestedPickupTime) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Information -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Delivery Information</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.deliveryAddress) }}</label>
+                                    {{ form_widget(form.deliveryAddress, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400', 'id': 'deliveryAddress'}}) }}
+                                    {{ form_errors(form.deliveryAddress) }}
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.requestedDeliveryTime) }}</label>
+                                    {{ form_widget(form.requestedDeliveryTime, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400'}}) }}
+                                    <p class="text-xs text-indigo-400">Optional: If not specified, will be calculated based on distance</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parcel Information -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Parcel Details</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.parcelType) }}</label>
+                                    {{ form_widget(form.parcelType, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                                    {{ form_errors(form.parcelType) }}
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.parcelWeight) }}</label>
+                                    {{ form_widget(form.parcelWeight, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="mt-4 space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.parcelDescription) }}</label>
+                                {{ form_widget(form.parcelDescription, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400'}}) }}
+                            </div>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="pt-4 border-t border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-4">Additional Options</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="block text-indigo-200 font-semibold">{{ form_label(form.priorityLevel) }}</label>
+                                    {{ form_widget(form.priorityLevel, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="mt-4 space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.specialInstructions) }}</label>
+                                {{ form_widget(form.specialInstructions, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-indigo-200 focus:outline-none focus:border-indigo-400', 'rows': '3'}}) }}
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex gap-4 pt-6 border-t border-white/10">
+                            <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition shadow-lg hover:shadow-xl">
+                                Create Booking & Check Availability
+                            </button>
+                            <a href="{{ path('staff_booking_index') }}" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-3 rounded-lg transition border border-white/20 flex items-center justify-center">
+                                Cancel
+                            </a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="space-y-6">
+                    <!-- Quick Info -->
+                    <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-lg border border-blue-400/30 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">📋 Booking Info</h3>
+                        <ul class="space-y-2 text-sm text-indigo-200">
+                            <li>✓ Fill in all required fields marked with *</li>
+                            <li>✓ Pickup time must be in the future</li>
+                            <li>✓ Driver availability will be checked</li>
+                            <li>✓ You'll see available drivers after booking</li>
+                            <li>✓ Estimated fare shown for reference</li>
+                        </ul>
+                    </div>
+
+                    <!-- Booking Types -->
+                    <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-400/30 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">🚚 Booking Types</h3>
+                        <div class="space-y-3">
+                            <div class="flex gap-3">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-300 text-xs font-bold">D</div>
+                                <div>
+                                    <p class="font-semibold text-white">Delivery</p>
+                                    <p class="text-xs text-indigo-300">Ship items to customers</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-xs font-bold">P</div>
+                                <div>
+                                    <p class="font-semibold text-white">Pickup</p>
+                                    <p class="text-xs text-indigo-300">Collect items from customers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parcel Types -->
+                    <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-lg border border-emerald-400/30 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">📦 Parcel Types</h3>
+                        <ul class="space-y-2 text-sm text-indigo-200">
+                            <li><span class="text-emerald-300">📄</span> Document - Small papers</li>
+                            <li><span class="text-emerald-300">📦</span> Small - Up to 5kg</li>
+                            <li><span class="text-emerald-300">📦</span> Medium - 5-20kg</li>
+                            <li><span class="text-emerald-300">📦</span> Large - Above 20kg</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

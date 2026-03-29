@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create/Edit Complaint - Staff{% endblock %}
+
+{% block body %}
+<div class="container mx-auto py-8 px-4 max-w-2xl">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">
+        {% if form.vars.value.id %}Edit{% else %}Create{% endif %} Complaint
+    </h1>
+
+    {{ form_start(form) }}
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="mb-6">
+                {{ form_label(form.customerName, 'Customer Name', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.customerName, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500'}}) }}
+                {% if form.customerName.vars.errors %}
+                    <div class="text-red-600 text-sm mt-2">{{ form_errors(form.customerName) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.message, 'Message', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.message, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'rows': 4}}) }}
+                {% if form.message.vars.errors %}
+                    <div class="text-red-600 text-sm mt-2">{{ form_errors(form.message) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.status, 'Status', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.status, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500'}}) }}
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded">
+                    {% if form.vars.value.id %}Update{% else %}Create{% endif %}
+                </button>
+                <a href="{{ path('staff_complaint_index') }}" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

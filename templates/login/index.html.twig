@@ -1,0 +1,291 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Login - Habal Habal Management System{% endblock %}
+
+{% block body %}
+<!-- Account Disabled Modal Notification -->
+{% if app.session.has('account_disabled') and app.session.get('account_disabled') %}
+    <!-- IF: Account is DISABLED - Show Modal Popup -->
+    <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+            <!-- Red Header with Warning Icon -->
+            <div class="bg-red-600 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <svg class="h-6 w-6 text-white flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 9v2m0 4v2m7.07-10.07A10 10 0 1 1 4.93 4.93"></path>
+                        <line x1="12" y1="9" x2="12" y2="15"></line>
+                    </svg>
+                    <h3 class="text-lg font-bold text-white">Account Disabled</h3>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="px-6 py-5 bg-gray-50">
+                <div class="space-y-3">
+                    <p class="text-gray-800 text-base font-medium">
+                        Your account has been <span class="text-red-600 font-bold">{{ app.session.get('disabled_user_status')|upper }}</span> by the administrator.
+                    </p>
+                    <div class="bg-red-50 border-l-4 border-red-600 p-3">
+                        <p class="text-gray-700 text-sm">
+                            <span class="font-semibold text-gray-900">Email:</span> {{ app.session.get('disabled_user_email') }}
+                        </p>
+                    </div>
+                    <p class="text-gray-600 text-sm">
+                        You no longer have access to the system. Please contact the administrator to request account reactivation.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer with Action Button -->
+            <div class="bg-gray-100 px-6 py-4 border-t border-gray-200 flex justify-between gap-3">
+                <button 
+                    type="button"
+                    onclick="openContactModal()"
+                    class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium text-center text-sm"
+                >
+                    Contact Admin
+                </button>
+                <button 
+                    type="button"
+                    onclick="clearDisabledSession()"
+                    class="flex-1 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors font-medium"
+                >
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function clearDisabledSession() {
+            // Make an AJAX call to clear the session flags
+            fetch('{{ path('app_clear_disabled_session') }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                // Redirect to login after clearing
+                window.location.href = '{{ path('app_login') }}';
+            }).catch(error => {
+                // If fetch fails, just redirect
+                window.location.href = '{{ path('app_login') }}';
+            });
+        }
+
+        function openContactModal() {
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+
+        function sendContactMessage(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            fetch('{{ path('app_send_contact_message') }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    subject: subject,
+                    message: message
+                })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    alert('Message sent successfully!');
+                    closeContactModal();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Error sending message');
+            });
+        }
+    </script>
+
+    <!-- Contact Admin Modal -->
+    <div id="contactModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+            <!-- Blue Header -->
+            <div class="bg-blue-600 px-6 py-4">
+                <h3 class="text-lg font-bold text-white">Contact Administrator</h3>
+            </div>
+
+            <!-- Content -->
+            <form onsubmit="sendContactMessage(event)" class="px-6 py-5 space-y-4">
+                <div>
+                    <label for="contactEmail" class="block text-sm font-medium text-gray-900 mb-1">
+                        Your Email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="contactEmail" 
+                        required
+                        value="{{ app.session.get('disabled_user_email') }}"
+                        readonly
+                        class="block w-full rounded-md border-gray-300 px-3 py-2 bg-gray-100 text-gray-600"
+                    >
+                </div>
+
+                <div>
+                    <label for="contactSubject" class="block text-sm font-medium text-gray-900 mb-1">
+                        Subject
+                    </label>
+                    <input 
+                        type="text" 
+                        id="contactSubject" 
+                        required
+                        placeholder="Subject of your message"
+                        class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                <div>
+                    <label for="contactMessage" class="block text-sm font-medium text-gray-900 mb-1">
+                        Message
+                    </label>
+                    <textarea 
+                        id="contactMessage" 
+                        required
+                        rows="4"
+                        placeholder="Write your message..."
+                        class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                </div>
+
+                <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex gap-3 -mx-6 -mb-5">
+                    <button 
+                        type="submit"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                    >
+                        Send
+                    </button>
+                    <button 
+                        type="button"
+                        onclick="closeContactModal()"
+                        class="flex-1 px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition-colors font-medium"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% else %}
+    <!-- ELSE: Account is ENABLED - Show Normal Login Form -->
+{% endif %}
+
+<div class="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div class="w-full max-w-md space-y-8">
+        <!-- Header -->
+        <div class="flex justify-center">
+            <img class="h-12 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
+        </div>
+
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
+                Sign in to your account
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-400">
+                Habal Habal Fleet Management System
+            </p>
+        </div>
+
+        <!-- Error Message -->
+        {% if error %}
+            <div class="rounded-md bg-red-900 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-400">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Login Form -->
+        <form class="mt-8 space-y-6" action="{{ path('app_login') }}" method="post">
+            <div class="rounded-lg bg-gray-800 p-6 space-y-4">
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                        Email address
+                    </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        value="{{ last_email }}"
+                        required 
+                        autofocus
+                        class="block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                        placeholder="user@example.com"
+                    >
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                        Password
+                    </label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password" 
+                        required
+                        class="block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                        placeholder="••••••••"
+                    >
+                </div>
+
+                <!-- CSRF Token -->
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-center">
+                    <input 
+                        type="checkbox" 
+                        name="agree_terms" 
+                        id="agree_terms"
+                        required
+                        class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-500"
+                    >
+                    <label for="agree_terms" class="ml-2 block text-sm text-gray-400">
+                        I agree to the terms and conditions
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full rounded-md bg-indigo-500 py-2 px-4 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors"
+                >
+                    Sign in
+                </button>
+            </div>
+        </form>
+
+        <!-- Register Link -->
+        <div class="rounded-lg bg-gray-800 p-4 border border-gray-700 text-center text-sm text-gray-400">
+            <p>Don't have an account? <a href="{{ path('app_register') }}" class="text-indigo-400 hover:underline">Register here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

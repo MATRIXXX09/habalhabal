@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <!-- Admin Sidebar -->
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <!-- Main Content -->
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
+                    <p class="text-gray-400">Overview of your platform statistics</p>
+                </div>
+                <div class="flex items-center gap-x-4 bg-gray-800/50 rounded-lg px-4 py-3 border border-gray-700">
+                    <div class="flex items-center gap-2">
+                        <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-sm text-gray-300">Online</span>
+                    </div>
+                    <div class="h-6 w-px bg-gray-700"></div>
+                    <span class="text-sm text-gray-300">{{ app.user.email }}</span>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+                <!-- Users Card -->
+                <div class="card-animate card-hover overflow-hidden rounded-2xl bg-white shadow-xl shimmer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-500 mb-2">Total Users</p>
+                                <p class="stat-number text-4xl font-bold">{{ users }}</p>
+                            </div>
+                            <div class="icon-bounce flex-shrink-0">
+                                <div class="h-16 w-16 rounded-2xl gradient-bg flex items-center justify-center shadow-lg">
+                                    <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4">
+                        <a href="{{ path('app_admin_users') }}" class="text-sm font-semibold text-indigo-700 hover:text-indigo-900 flex items-center gap-2 group">
+                            View all users
+                            <svg class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Shipments Card -->
+                <div class="card-animate card-hover overflow-hidden rounded-2xl bg-white shadow-xl shimmer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-500 mb-2">Total Shipments</p>
+                                <p class="stat-number text-4xl font-bold">{{ shipments }}</p>
+                            </div>
+                            <div class="icon-bounce flex-shrink-0">
+                                <div class="h-16 w-16 rounded-2xl gradient-bg-2 flex items-center justify-center shadow-lg">
+                                    <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-pink-50 to-red-50 px-6 py-4">
+                        <a href="{{ path('app_admin_shipments') }}" class="text-sm font-semibold text-pink-700 hover:text-pink-900 flex items-center gap-2 group">
+                            View all shipments
+                            <svg class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Complaints Card -->
+                <div class="card-animate card-hover overflow-hidden rounded-2xl bg-white shadow-xl shimmer">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-500 mb-2">Total Complaints</p>
+                                <p class="stat-number text-4xl font-bold">{{ complaints_total }}</p>
+                                <div class="flex gap-4 mt-3">
+                                    <div class="flex items-center gap-1">
+                                        <div class="h-2 w-2 rounded-full bg-yellow-500"></div>
+                                        <span class="text-xs text-gray-600">Pending: <strong>{{ complaints_pending }}</strong></span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <div class="h-2 w-2 rounded-full bg-green-500"></div>
+                                        <span class="text-xs text-gray-600">Done: <strong>{{ complaints_done }}</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="icon-bounce animation-delay-half flex-shrink-0">
+                                <div class="h-16 w-16 rounded-2xl gradient-bg-3 flex items-center justify-center shadow-lg">
+                                    <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v9" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-cyan-50 to-blue-50 px-6 py-4">
+                        <a href="{{ path('app_admin_complaints') }}" class="text-sm font-semibold text-cyan-700 hover:text-cyan-900 flex items-center gap-2 group">
+                            View all complaints
+                            <svg class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Stats Overview -->
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="card-animate relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 px-6 py-8 shadow-2xl">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-white/10"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 h-16 w-16 rounded-full bg-white/10"></div>
+                    <dt class="relative">
+                        <div class="absolute rounded-xl bg-white/20 p-3 backdrop-blur-sm">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 truncate text-sm font-medium text-white/80">Total Users</p>
+                    </dt>
+                    <dd class="ml-16 flex items-baseline pb-6 sm:pb-7 mt-2">
+                        <p class="text-4xl font-bold text-white">{{ users|default(0) }}</p>
+                    </dd>
+                </div>
+
+                <div class="card-animate relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-600 to-red-600 px-6 py-8 shadow-2xl animation-delay-2">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-white/10"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 h-16 w-16 rounded-full bg-white/10"></div>
+                    <dt class="relative">
+                        <div class="absolute rounded-xl bg-white/20 p-3 backdrop-blur-sm">
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 truncate text-sm font-medium text-white/80">Total Shipments</p>
+                    </dt>
+                    <dd class="ml-16 flex items-baseline pb-6 sm:pb-7 mt-2">
+                        <p class="text-4xl font-bold text-white">{{ shipments|default(0) }}</p>
+                    </dd>
+                </div>
+
+                <div class="card-animate relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-600 to-blue-600 px-6 py-8 shadow-2xl animation-delay-3">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-white/10"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 h-16 w-16 rounded-full bg-white/10"></div>
+                    <dt class="relative">
+                        <div class="absolute rounded-xl bg-white/20 p-3 backdrop-blur-sm">
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="ml-16 truncate text-sm font-medium text-white/80">Active Status</p>
+                    </dt>
+                    <dd class="ml-16 flex items-baseline pb-6 sm:pb-7 mt-2">
+                        <p class="text-4xl font-bold text-white">100%</p>
+                    </dd>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

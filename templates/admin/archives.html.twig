@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Archives{% endblock %}
+
+{% block body %}
+<div class="min-h-full">
+        
+<div class="min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <!-- Admin Sidebar -->
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <!-- Main Content -->
+    <main class="pl-72">
+<div class="px-8 py-6">
+    <!-- Header Section -->
+    <div class="list-animate mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">Archived Staff Accounts</h1>
+                <p class="text-gray-400 flex items-center gap-2">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9-3h4a1 1 0 011 1v1H9V6a1 1 0 011-1z" />
+                    </svg>
+                    Manage and restore archived staff accounts
+                </p>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="alert-animate rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 mt-6 border border-green-500/30 shadow-lg">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="text-sm font-medium text-green-400">{{ message }}</div>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert-animate rounded-xl bg-gradient-to-r from-red-500/10 to-pink-500/10 p-4 mt-6 border border-red-500/30 shadow-lg">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="text-sm font-medium text-red-400">{{ message }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-8 flow-root">
+        <div class="overflow-hidden rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 shadow-2xl">
+            <div class="overflow-x-auto text-white">
+                <table id="archivesTable" class="min-w-full divide text-white">
+                    <thead class="table-header">
+                        <tr>
+                            <th scope="col" class="py-4 pl-6 pr-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Email</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Roles</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Archived Date</th>
+                            <th scope="col" class="relative py-4 pl-3 pr-6 text-xs font-bold text-gray-300 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700/30 bg-gray-800/30">
+                        {% for user in users %}
+                        <tr class="table-row hover:bg-gray-700/20" style="animation-delay: {{ loop.index * 0.05 }}s;">
+                            <td class="whitespace-nowrap py-5 pl-6 pr-3 text-sm">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white font-bold shadow-lg">
+                                        {{ user.email|slice(0, 1)|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-white">{{ user.email }}</div>
+                                        <div class="text-xs text-gray-400">ID: #{{ user.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-5 text-sm">
+                                <div class="flex flex-wrap gap-2">
+                                    {% set displayRoles = user.roles|filter(role => role != 'ROLE_STAFF') %}
+                                    {% if displayRoles|length == 0 %}
+                                        <span class="badge inline-flex items-center gap-1 rounded-lg bg-gray-500/10 px-3 py-1.5 text-xs font-semibold text-gray-400 ring-1 ring-inset ring-gray-500/20 shadow-sm">
+                                            STAFF
+                                        </span>
+                                    {% else %}
+                                        {% for role in displayRoles %}
+                                            {% set roleDisplay = role|replace({'ROLE_': ''}) %}
+                                            <span class="badge inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-3 py-1.5 text-xs font-semibold text-blue-300 ring-1 ring-inset ring-blue-500/30 shadow-lg shadow-blue-500/20">
+                                                {{ roleDisplay }}
+                                            </span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-5 text-sm">
+                                {% if user.disabledAt %}
+                                    <span class="text-gray-300">{{ user.disabledAt|date('M d, Y') }}</span>
+                                {% else %}
+                                    <span class="text-gray-500">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="relative whitespace-nowrap py-5 pl-3 pr-6 text-right text-sm font-medium">
+                                <div class="flex justify-end items-center gap-2">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <form method="post" action="{{ path('app_admin_users_reactivate', {'id': user.id}) }}" onsubmit="return confirm('Reactivate this account?');" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('reactivate' ~ user.id) }}">
+                                            <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300 ring-1 ring-inset ring-green-500/20 transition-colors">Reactivate</button>
+                                        </form>
+                                        <form method="post" action="{{ path('app_admin_users_delete', {'id': user.id}) }}" onsubmit="return confirm('Permanently delete this user? This action cannot be undone.');" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                            <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 ring-1 ring-inset ring-red-500/20 transition-colors">Delete</button>
+                                        </form>
+                                    {% else %}
+                                        <span class="px-3 py-2 rounded-lg bg-gray-500/10 text-gray-400 text-xs">View Only</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="py-12 text-center text-gray-400">No archived accounts found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Count only actual data rows, not empty state rows (those with colspan)
+        var dataRows = $('#archivesTable tbody tr').not(':has(td[colspan])').length;
+        if ($.fn.DataTable && dataRows > 0) {
+            $('#archivesTable').DataTable({
+                pageLength: 10,
+                order: [[0, 'asc']],
+                language: {
+                    search: "Filter records:",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ archived accounts",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    },
+                    emptyTable: "No archived accounts found."
+                },
+                columnDefs: [
+                    { orderable: false, targets: 3 }
+                ],
+                drawCallback: function() {
+                    $('.table-row').each(function(index) {
+                        $(this).css('animation-delay', (index * 0.05) + 's');
+                    });
+                }
+            });
+        }
+    });
+    </script>
+</main>
+</div>
+</div>
+{% endblock %}

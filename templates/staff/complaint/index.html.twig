@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Complaints - Staff{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <a href="{{ path('app_staff_dashboard') }}" class="text-indigo-300 hover:text-indigo-200 mb-4 inline-flex items-center gap-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    Back to Dashboard
+                </a>
+                <h1 class="text-4xl font-bold text-white mt-2">Customer Complaints</h1>
+                <p class="text-indigo-300 mt-1">Track and manage customer complaints</p>
+            </div>
+            <a href="{{ path('staff_complaint_new') }}" class="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Create Complaint
+                </span>
+            </a>
+        </div>
+
+        <!-- Success Messages -->
+        {% if app.flashes('success') %}
+            {% for message in app.flashes('success') %}
+                <div class="bg-gradient-to-r from-green-600 to-emerald-600 border border-green-400/30 text-white px-6 py-4 rounded-lg mb-6 shadow-lg flex items-center gap-3">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Complaints Table -->
+        {% if complaints %}
+            <div class="bg-gray-800/40 backdrop-blur-md rounded-xl shadow-2xl border border-white/10 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-red-900/50 to-pink-900/50 border-b border-white/10">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-red-300 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-red-300 uppercase tracking-wider">Customer Name</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-red-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-red-300 uppercase tracking-wider">Created</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-red-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for complaint in complaints %}
+                                <tr class="table-row hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4 text-sm font-semibold text-white">#{{ complaint.id }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-300">{{ complaint.customerName }}</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {% if complaint.status == 'resolved' %}bg-emerald-500/20 text-emerald-300{% elseif complaint.status == 'pending' %}bg-yellow-500/20 text-yellow-300{% elseif complaint.status == 'open' %}bg-red-500/20 text-red-300{% else %}bg-gray-500/20 text-gray-300{% endif %}">
+                                            {{ complaint.status ?? 'Open' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-400">{{ complaint.createdAt|date('M d, Y') }}</td>
+                                    <td class="px-6 py-4 text-sm space-x-3 flex items-center">
+                                        <a href="{{ path('staff_complaint_show', {'id': complaint.id}) }}" class="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">View</a>
+                                        <a href="{{ path('staff_complaint_edit', {'id': complaint.id}) }}" class="text-amber-400 hover:text-amber-300 font-medium transition-colors">Edit</a>
+                                        <form class="inline-form" method="post" action="{{ path('staff_complaint_delete', {'id': complaint.id}) }}" onsubmit="return confirm('Are you sure?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ complaint.id) }}">
+                                            <button type="submit" class="text-red-400 hover:text-red-300 font-medium transition-colors">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-400/30 rounded-xl p-8 text-center">
+                <svg class="w-16 h-16 mx-auto text-red-400 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2M7.08 6.47A9.001 9.001 0 1020.92 17.53M9.58 5.5A3.5 3.5 0 1114.42 10.34" /></svg>
+                <p class="text-red-300 text-lg font-medium">No complaints yet</p>
+                <p class="text-red-400/70 mt-1">Create your first complaint report to get started</p>
+                <a href="{{ path('staff_complaint_new') }}" class="mt-6 inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Create Complaint
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

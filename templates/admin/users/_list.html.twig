@@ -1,0 +1,137 @@
+{% block user_list %}
+<div class="mt-8 flow-root">
+    <div class="overflow-hidden rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 shadow-2xl">
+        <div class="overflow-x-auto  text-white">
+            <table id="usersTable" class="min-w-full divide text-white">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col" class="py-4 pl-6 pr-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Email</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Roles</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="relative py-4 pl-3 pr-6 text-xs font-bold text-gray-300 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700/30 bg-gray-800/30">
+                    {% for user in users %}
+                    {% if user.status != 'archived' %}
+                    <tr class="table-row hover:bg-gray-700/20" style="animation-delay: {{ loop.index * 0.05 }}s;">
+                        <td class="whitespace-nowrap py-5 pl-6 pr-3 text-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
+                                    {{ user.email|slice(0, 1)|upper }}
+                                </div>
+                                <div>
+                                    <div class="font-medium text-white">{{ user.email }}</div>
+                                    <div class="text-xs text-gray-400">ID: #{{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="whitespace-nowrap px-6 py-5 text-sm">
+                            <div class="flex flex-wrap gap-2">
+                                {% set displayRoles = user.roles|filter(role => role != 'ROLE_STAFF') %}
+                                {% if displayRoles|length == 0 %}
+                                    <span class="badge inline-flex items-center gap-1 rounded-lg bg-gray-500/10 px-3 py-1.5 text-xs font-semibold text-gray-400 ring-1 ring-inset ring-gray-500/20 shadow-sm">
+                                        STAFF
+                                    </span>
+                                {% else %}
+                                    {% for role in displayRoles %}
+                                        {% set roleDisplay = role|replace({'ROLE_': ''}) %}
+                                        <span class="badge inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-3 py-1.5 text-xs font-semibold text-blue-300 ring-1 ring-inset ring-blue-500/30 shadow-lg shadow-blue-500/20">
+                                            {{ roleDisplay }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="whitespace-nowrap px-6 py-5 text-sm">
+                            {% if user.status == 'active' %}
+                                <span class="badge inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-3 py-1.5 text-xs font-semibold text-green-300 ring-1 ring-inset ring-green-500/30 shadow-lg shadow-green-500/20">Active</span>
+                            {% elseif user.status == 'disabled' %}
+                                <span class="badge inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-3 py-1.5 text-xs font-semibold text-yellow-300 ring-1 ring-inset ring-yellow-500/30 shadow-lg shadow-yellow-500/20">Disabled</span>
+                            {% else %}
+                                <span class="badge inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-500/20 to-pink-500/20 px-3 py-1.5 text-xs font-semibold text-red-300 ring-1 ring-inset ring-red-500/30 shadow-lg shadow-red-500/20">Archived</span>
+                            {% endif %}
+                        </td>
+                        <td class="relative whitespace-nowrap py-5 pl-3 pr-6 text-right text-sm font-medium">
+                            <div class="flex justify-end items-center gap-2">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_admin_users_edit', {'id': user.id}) }}" class="action-btn px-3 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-300 ring-1 ring-inset ring-indigo-500/20 transition-colors">Edit</a>
+                                    
+                                    {% if user.status == 'active' %}
+                                        <form method="post" action="{{ path('app_admin_users_disable', {'id': user.id}) }}" onsubmit="return confirm('Disable this account?');" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('disable' ~ user.id) }}">
+                                            <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300 ring-1 ring-inset ring-yellow-500/20 transition-colors">Disable</button>
+                                        </form>
+                                        <form method="post" action="{{ path('app_admin_users_archive', {'id': user.id}) }}" onsubmit="return confirm('Archive this account?');" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('archive' ~ user.id) }}">
+                                            <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 ring-1 ring-inset ring-red-500/20 transition-colors">Archive</button>
+                                        </form>
+                                    {% elseif user.status == 'disabled' %}
+                                        <form method="post" action="{{ path('app_admin_users_reactivate', {'id': user.id}) }}" onsubmit="return confirm('Reactivate this account?');" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('reactivate' ~ user.id) }}">
+                                            <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300 ring-1 ring-inset ring-green-500/20 transition-colors">Reactivate</button>
+                                        </form>
+                                    {% elseif user.status == 'archived' %}
+                                        <form method="post" action="{{ path('app_admin_users_reactivate', {'id': user.id}) }}" onsubmit="return confirm('Reactivate this account?');" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('reactivate' ~ user.id) }}">
+                                            <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-300 ring-1 ring-inset ring-green-500/20 transition-colors">Reactivate</button>
+                                        </form>
+                                    {% endif %}
+                                    
+                                    <form method="post" action="{{ path('app_admin_users_delete', {'id': user.id}) }}" onsubmit="return confirm('Are you sure you want to delete this user?');" class="inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                        <button type="submit" class="action-btn px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 ring-1 ring-inset ring-red-500/20 transition-colors">Delete</button>
+                                    </form>
+                                {% else %}
+                                    <span class="px-3 py-2 rounded-lg bg-gray-500/10 text-gray-400 text-xs">View Only</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="py-12 text-center text-gray-400">No users found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+        $(document).ready(function() {
+            // Count only actual data rows, not empty state rows (those with colspan)
+            var dataRows = $('#usersTable tbody tr').not(':has(td[colspan])').length;
+            if ($.fn.DataTable && dataRows > 0) {
+                console.log('DataTables loaded successfully');
+                $('#usersTable').DataTable({
+                    pageLength: 10,
+                    order: [[0, 'asc']],
+                    language: {
+                        search: "Filter records:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ users",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous"
+                        },
+                        emptyTable: "No users found."
+                    },
+                    //dom: '<"top flex items-center justify-between mb-4"lf>rt<"bottom flex items-center justify-between mt-4"ip>',
+                    drawCallback: function() {
+                        // Re-apply animations to newly visible rows after page change
+                        $('.table-row').each(function(index) {
+                            $(this).css('animation-delay', (index * 0.05) + 's');
+                        });
+                    }
+                });
+            } else {
+                console.error('DataTables not loaded!');
+            }
+        });
+    </script>
+{% endblock %}
+

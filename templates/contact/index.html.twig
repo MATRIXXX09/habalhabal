@@ -1,0 +1,332 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Contact Us - Habal Habal Management System{% endblock %}
+
+{% block body %}
+<div class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <img class="h-10 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
+                    <span class="text-xl font-bold">Habal Habal</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="{{ path('app_landing') }}" class="hover:text-indigo-400 transition">Home</a>
+                    <a href="{{ path('app_about') }}" class="hover:text-indigo-400 transition">About</a>
+                    <a href="{{ path('app_contact') }}" class="text-indigo-400">Contact</a>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="{{ path('app_login') }}" class="text-gray-300 hover:text-white transition">Sign In</a>
+                    <a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-indigo-900/20 to-transparent">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">Get In Touch</h1>
+            <p class="text-xl text-gray-300">
+                We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-12 mb-16">
+                <!-- Contact Info Card 1 -->
+                <div class="text-center">
+                    <div class="bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Email</h3>
+                    <p class="text-gray-400">support@habalhabal.com</p>
+                    <p class="text-gray-500 text-sm mt-2">We'll respond within 24 hours</p>
+                </div>
+
+                <!-- Contact Info Card 2 -->
+                <div class="text-center">
+                    <div class="bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 00.948-.684l1.498-4.493a1 1 0 011.502-.684l1.498 4.493a1 1 0 00.948.684H19a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Phone</h3>
+                    <p class="text-gray-400">+63 (123) 456-7890</p>
+                    <p class="text-gray-500 text-sm mt-2">Available 7 days a week</p>
+                </div>
+
+                <!-- Contact Info Card 3 -->
+                <div class="text-center">
+                    <div class="bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Location</h3>
+                    <p class="text-gray-400">Metro Manila, Philippines</p>
+                    <p class="text-gray-500 text-sm mt-2">Headquarters & Operations Center</p>
+                </div>
+            </div>
+
+            <!-- Contact Form and Hours -->
+            <div class="grid md:grid-cols-2 gap-16">
+                <!-- Contact Form -->
+                <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700">
+                    <h2 class="text-2xl font-bold mb-6">Send us a Message</h2>
+                    <form class="space-y-6" method="POST" action="#">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Full Name</label>
+                            <input 
+                                type="text" 
+                                name="name" 
+                                required
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500" 
+                                placeholder="Your Name"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Email Address</label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                required
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500" 
+                                placeholder="your.email@example.com"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Phone (Optional)</label>
+                            <input 
+                                type="tel" 
+                                name="phone" 
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500" 
+                                placeholder="+63 (123) 456-7890"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Subject</label>
+                            <select 
+                                name="subject" 
+                                required
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-indigo-500 text-white"
+                            >
+                                <option value="">Select a subject...</option>
+                                <option value="delivery">Delivery Inquiry</option>
+                                <option value="support">Customer Support</option>
+                                <option value="partnership">Partnership Inquiry</option>
+                                <option value="careers">Careers</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Message</label>
+                            <textarea 
+                                name="message" 
+                                required
+                                rows="5"
+                                class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500 resize-none" 
+                                placeholder="Tell us how we can help..."
+                            ></textarea>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition duration-200"
+                        >
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Business Hours and Info -->
+                <div>
+                    <div class="bg-gray-800/50 rounded-xl p-8 border border-gray-700 mb-8">
+                        <h2 class="text-2xl font-bold mb-6">Business Hours</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Monday - Friday</span>
+                                <span class="font-semibold">7:00 AM - 10:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Saturday</span>
+                                <span class="font-semibold">8:00 AM - 10:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Sunday</span>
+                                <span class="font-semibold">8:00 AM - 9:00 PM</span>
+                            </div>
+                            <div class="flex justify-between pt-4 border-t border-gray-700">
+                                <span class="text-gray-400">Delivery Services</span>
+                                <span class="font-semibold">24/7</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-indigo-600/20 to-indigo-900/20 rounded-xl p-8 border border-indigo-500/30">
+                        <h3 class="text-xl font-bold mb-4">Emergency Support</h3>
+                        <p class="text-gray-300 mb-4">
+                            Need immediate assistance? Our emergency support team is available 24/7 for urgent delivery issues.
+                        </p>
+                        <a href="tel:+63-123-456-7890" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                            Call Emergency Line
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/50">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+                <p class="text-gray-400">Can't find the answer you're looking for? Feel free to contact us.</p>
+            </div>
+
+            <div class="space-y-6">
+                <!-- FAQ Item 1 -->
+                <details class="group cursor-pointer">
+                    <summary class="flex justify-between items-center bg-gray-900 p-6 rounded-lg hover:bg-gray-800/80 transition">
+                        <span class="font-semibold text-lg">How quickly can you deliver my order?</span>
+                        <span class="text-indigo-400 transition group-open:rotate-180">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="bg-gray-900/50 p-6 border-t border-gray-700">
+                        <p class="text-gray-300">
+                            Most deliveries within Metro Manila are completed within 30-60 minutes. We offer express delivery (15-30 minutes) 
+                            for urgent orders and scheduled delivery for planned shipments. Delivery times may vary based on traffic conditions and location.
+                        </p>
+                    </div>
+                </details>
+
+                <!-- FAQ Item 2 -->
+                <details class="group cursor-pointer">
+                    <summary class="flex justify-between items-center bg-gray-900 p-6 rounded-lg hover:bg-gray-800/80 transition">
+                        <span class="font-semibold text-lg">What items can I send with Habal Habal?</span>
+                        <span class="text-indigo-400 transition group-open:rotate-180">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="bg-gray-900/50 p-6 border-t border-gray-700">
+                        <p class="text-gray-300">
+                            We deliver most items including documents, parcels, food, and retail goods. However, we cannot deliver hazardous materials, 
+                            perishables without proper packaging, or items exceeding 50kg. For special items, please contact our support team for confirmation.
+                        </p>
+                    </div>
+                </details>
+
+                <!-- FAQ Item 3 -->
+                <details class="group cursor-pointer">
+                    <summary class="flex justify-between items-center bg-gray-900 p-6 rounded-lg hover:bg-gray-800/80 transition">
+                        <span class="font-semibold text-lg">How do I track my delivery?</span>
+                        <span class="text-indigo-400 transition group-open:rotate-180">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="bg-gray-900/50 p-6 border-t border-gray-700">
+                        <p class="text-gray-300">
+                            After you place an order, you can track your delivery in real-time through our mobile app or web dashboard. 
+                            You'll receive a tracking link via email and SMS with live location updates of your rider.
+                        </p>
+                    </div>
+                </details>
+
+                <!-- FAQ Item 4 -->
+                <details class="group cursor-pointer">
+                    <summary class="flex justify-between items-center bg-gray-900 p-6 rounded-lg hover:bg-gray-800/80 transition">
+                        <span class="font-semibold text-lg">What if my delivery is late or lost?</span>
+                        <span class="text-indigo-400 transition group-open:rotate-180">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="bg-gray-900/50 p-6 border-t border-gray-700">
+                        <p class="text-gray-300">
+                            We guarantee on-time delivery. If your order is late, we'll provide a full refund or credit. For lost items, 
+                            our insurance covers up to the declared value. Contact our support team immediately with your tracking number.
+                        </p>
+                    </div>
+                </details>
+
+                <!-- FAQ Item 5 -->
+                <details class="group cursor-pointer">
+                    <summary class="flex justify-between items-center bg-gray-900 p-6 rounded-lg hover:bg-gray-800/80 transition">
+                        <span class="font-semibold text-lg">Are your riders insured?</span>
+                        <span class="text-indigo-400 transition group-open:rotate-180">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="bg-gray-900/50 p-6 border-t border-gray-700">
+                        <p class="text-gray-300">
+                            Yes! All our riders are fully insured. Additionally, every delivery includes cargo insurance to protect your items. 
+                            You can optionally purchase additional premium insurance for high-value items.
+                        </p>
+                    </div>
+                </details>
+
+                <!-- FAQ Item 6 -->
+                <details class="group cursor-pointer">
+                    <summary class="flex justify-between items-center bg-gray-900 p-6 rounded-lg hover:bg-gray-800/80 transition">
+                        <span class="font-semibold text-lg">How much does delivery cost?</span>
+                        <span class="text-indigo-400 transition group-open:rotate-180">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <div class="bg-gray-900/50 p-6 border-t border-gray-700">
+                        <p class="text-gray-300">
+                            Delivery fees start at ₱99 for standard delivery within Metro Manila. Express delivery costs ₱199, and scheduled 
+                            delivery is negotiable based on your needs. Use our quotation tool to get an instant estimate.
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6">Still Have Questions?</h2>
+            <p class="text-xl text-gray-300 mb-8">Our team is here to help. Feel free to reach out using the form above or call us directly.</p>
+            <a href="#contact-form" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition">
+                Send us a Message
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <p class="text-gray-500 text-sm">&copy; 2026 Habal Habal Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}

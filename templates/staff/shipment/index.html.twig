@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Shipments - Staff{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <a href="{{ path('app_staff_dashboard') }}" class="text-indigo-300 hover:text-indigo-200 mb-4 inline-flex items-center gap-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    Back to Dashboard
+                </a>
+                <h1 class="text-4xl font-bold text-white mt-2">My Shipments</h1>
+                <p class="text-indigo-300 mt-1">Manage and track your shipments</p>
+            </div>
+            <a href="{{ path('staff_shipment_new') }}" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Create Shipment
+                </span>
+            </a>
+        </div>
+
+        <!-- Success Messages -->
+        {% if app.flashes('success') %}
+            {% for message in app.flashes('success') %}
+                <div class="bg-gradient-to-r from-green-600 to-emerald-600 border border-green-400/30 text-white px-6 py-4 rounded-lg mb-6 shadow-lg flex items-center gap-3">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Shipments Table -->
+        {% if shipments %}
+            <div class="bg-gray-800/40 backdrop-blur-md rounded-xl shadow-2xl border border-white/10 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 border-b border-white/10">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">Tracking #</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">Origin</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">Destination</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">Created</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-indigo-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for shipment in shipments %}
+                                <tr class="table-row hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4 text-sm font-semibold text-white">#{{ shipment.id }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-300">{{ shipment.trackingNumber }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-300">{{ shipment.origin }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-300">{{ shipment.destination }}</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {% if shipment.status == 'delivered' %}bg-emerald-500/20 text-emerald-300{% elseif shipment.status == 'pending' %}bg-yellow-500/20 text-yellow-300{% elseif shipment.status == 'in_transit' %}bg-blue-500/20 text-blue-300{% else %}bg-gray-500/20 text-gray-300{% endif %}">
+                                            {{ shipment.status ?? 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-400">{{ shipment.createdAt|date('M d, Y') }}</td>
+                                    <td class="px-6 py-4 text-sm space-x-3 flex items-center">
+                                        <a href="{{ path('staff_shipment_show', {'id': shipment.id}) }}" class="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">View</a>
+                                        <a href="{{ path('staff_shipment_edit', {'id': shipment.id}) }}" class="text-amber-400 hover:text-amber-300 font-medium transition-colors">Edit</a>
+                                        <form class="inline-form" method="post" action="{{ path('staff_shipment_delete', {'id': shipment.id}) }}" onsubmit="return confirm('Are you sure?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ shipment.id) }}">
+                                            <button type="submit" class="text-red-400 hover:text-red-300 font-medium transition-colors">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-400/30 rounded-xl p-8 text-center">
+                <svg class="w-16 h-16 mx-auto text-blue-400 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
+                <p class="text-blue-300 text-lg font-medium">No shipments yet</p>
+                <p class="text-blue-400/70 mt-1">Create your first shipment to get started</p>
+                <a href="{{ path('staff_shipment_new') }}" class="mt-6 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Create Shipment
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

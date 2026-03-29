@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create/Edit Vehicle - Staff{% endblock %}
+
+{% block body %}
+<div class="container mx-auto py-8 px-4 max-w-2xl">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">
+        {% if form.vars.value.id %}Edit{% else %}Create{% endif %} Vehicle
+    </h1>
+
+    {{ form_start(form) }}
+        <div class="bg-white rounded-lg shadow p-6">
+            <!-- Import from Rider Data Section -->
+            <div class="mb-6 pb-6 border-b border-gray-200">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 class="text-sm font-semibold text-blue-900 mb-3">Import from Rider Data</h3>
+                    <div>
+                        <label for="manual_rider" class="block text-sm font-medium text-gray-700 mb-2">Select Rider</label>
+                        <select id="manual_rider" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-900 [&_option]:bg-gray-100 [&_option]:text-gray-900">
+                            <option value="">-- Select a rider --</option>
+                            {% for rider in riders %}
+                                <option value="{{ rider.id }}" {% if rider.id in usedRiderIds %}disabled title="This rider is already assigned to another vehicle"{% endif %}>
+                                    {{ rider.fullName }}{% if rider.name %} ({{ rider.name }}){% endif %} - {{ rider.plateNumber }}
+                                    {% if rider.id in usedRiderIds %} [ALREADY USED]{% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {# Hidden field to sync with form #}
+                        {{ form_widget(form.riderHidden, {'attr': {'id': 'riderHiddenField'}}) }}
+                        <p class="text-xs text-gray-600 mt-2">Selecting a rider will auto-fill their vehicle information</p>
+                    </div>
+                    <div id="selectedRiderInfo" class="hidden mt-4 p-3 rounded-lg bg-blue-100 border border-blue-200">
+                        <p class="text-sm text-blue-900">
+                            <strong>Selected Rider:</strong> <span id="riderNameDisplay"></span>
+                        </p>
+                        <p class="text-xs text-blue-700 mt-1">Contact: <span id="riderContactDisplay"></span></p>
+                        <p class="text-xs text-blue-700">Vehicle: <span id="riderVehicleDisplay"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.plateNumber, 'Plate Number', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.plateNumber, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'id': 'vehicle_plateNumber'}}) }}
+                {% if form.plateNumber.vars.errors %}
+                    <div class="text-red-600 text-sm mt-2">{{ form_errors(form.plateNumber) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.type, 'Type', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.type, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'id': 'vehicle_type'}}) }}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.model, 'Model', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.model, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'id': 'vehicle_model'}}) }}
+                {% if form.model.vars.errors %}
+                    <div class="text-red-600 text-sm mt-2">{{ form_errors(form.model) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.capacity, 'Capacity', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.capacity, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'id': 'vehicle_capacity'}}) }}
+                {% if form.capacity.vars.errors %}
+                    <div class="text-red-600 text-sm mt-2">{{ form_errors(form.capacity) }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.currentLocation, 'Current Location', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                {{ form_widget(form.currentLocation, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500', 'id': 'vehicle_currentLocation'}}) }}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.isAvailable, 'Is Available', {'label_attr': {'class': 'flex items-center text-sm font-medium text-gray-700'}}) }}
+                {{ form_widget(form.isAvailable, {'attr': {'class': 'h-4 w-4 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500'}}) }}
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded">
+                    {% if form.vars.value.id %}Update{% else %}Create{% endif %}
+                </button>
+                <a href="{{ path('staff_vehicle_index') }}" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    {{ form_end(form) }}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const riderSelector = document.getElementById('manual_rider');
+    const hiddenField = document.getElementById('riderHiddenField');
+    const selectedRiderInfo = document.getElementById('selectedRiderInfo');
+    const riderNameDisplay = document.getElementById('riderNameDisplay');
+    const riderContactDisplay = document.getElementById('riderContactDisplay');
+    const riderVehicleDisplay = document.getElementById('riderVehicleDisplay');
+
+    const riderData = {
+        {% for rider in riders %}
+            {{ rider.id }}: {
+                fullName: '{{ rider.fullName|escape('js') }}',
+                vehicleType: '{{ rider.vehicleType|escape('js') }}',
+                plateNumber: '{{ rider.plateNumber|escape('js') }}',
+                contactNumber: '{{ rider.contactNumber|default('')|escape('js') }}'
+            }{{ not loop.last ? ',' : '' }}
+        {% endfor %}
+    };
+
+    if (!riderSelector) return;
+
+    function applyRiderData(selectedId) {
+        if (selectedId && riderData[selectedId]) {
+            const data = riderData[selectedId];
+            const typeSelect = document.getElementById('vehicle_type');
+            const plateInput = document.getElementById('vehicle_plateNumber');
+
+            // Update hidden field
+            if (hiddenField) {
+                hiddenField.value = selectedId;
+            }
+
+            // Fill in vehicle type
+            if (typeSelect && data.vehicleType) {
+                for (let option of typeSelect.options) {
+                    if (option.value.toLowerCase() === data.vehicleType.toLowerCase() || option.text.toLowerCase() === data.vehicleType.toLowerCase()) {
+                        typeSelect.value = option.value;
+                        break;
+                    }
+                }
+            }
+
+            // Fill in plate number
+            if (plateInput && data.plateNumber) {
+                plateInput.value = data.plateNumber;
+            }
+
+            // Show rider info
+            if (selectedRiderInfo) {
+                riderNameDisplay.textContent = data.fullName;
+                riderContactDisplay.textContent = data.contactNumber || 'N/A';
+                riderVehicleDisplay.textContent = (data.vehicleType || 'N/A') + ' - ' + (data.plateNumber || 'N/A');
+                selectedRiderInfo.classList.remove('hidden');
+            }
+        } else {
+            // Clear hidden field
+            if (hiddenField) {
+                hiddenField.value = '';
+            }
+            // Hide rider info
+            if (selectedRiderInfo) {
+                selectedRiderInfo.classList.add('hidden');
+            }
+        }
+    }
+
+    riderSelector.addEventListener('change', function() {
+        applyRiderData(this.value);
+    });
+
+    if (riderSelector.value) {
+        applyRiderData(riderSelector.value);
+    }
+});
+</script>
+{% endblock %}

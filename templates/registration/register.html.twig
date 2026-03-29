@@ -1,0 +1,96 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Register - Habal Habal Management System{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+    <div class="w-full max-w-md space-y-8">
+        <!-- Header -->
+        <div class="flex justify-center">
+            <img class="h-12 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
+        </div>
+
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
+                Create an account
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-400">
+                Register a new account to access the system
+            </p>
+        </div>
+
+        <!-- Register Form -->
+        {{ form_start(registrationForm, {'attr': {'class': 'mt-8 space-y-6'}}) }}
+            <div class="rounded-lg bg-gray-800 p-6 space-y-4">
+                <!-- Email Field -->
+                <div>
+                    <label for="{{ registrationForm.email.vars.id }}" class="block text-sm font-medium text-gray-300 mb-2">
+                        Email address
+                    </label>
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {
+                            'class': 'block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800',
+                            'placeholder': 'user@example.com'
+                        }
+                    }) }}
+                    {% if registrationForm.email.vars.errors %}
+                        <div class="mt-2 text-sm text-red-400">
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="{{ registrationForm.plainPassword.vars.id }}" class="block text-sm font-medium text-gray-300 mb-2">
+                        Password
+                    </label>
+                    {{ form_widget(registrationForm.plainPassword, {
+                        'attr': {
+                            'class': 'block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800',
+                            'placeholder': '••••••••'
+                        }
+                    }) }}
+                    {% if registrationForm.plainPassword.vars.errors %}
+                        <div class="mt-2 text-sm text-red-400">
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-center">
+                    {{ form_widget(registrationForm.agreeTerms, {
+                        'attr': {
+                            'class': 'h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-500'
+                        }
+                    }) }}
+                    <label for="{{ registrationForm.agreeTerms.vars.id }}" class="ml-2 block text-sm text-gray-400">
+                        {{ registrationForm.agreeTerms.vars.label }}
+                    </label>
+                    {% if registrationForm.agreeTerms.vars.errors %}
+                        <div class="ml-2 text-sm text-red-400">
+                            {{ form_errors(registrationForm.agreeTerms) }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- CSRF Token (already included in form_end) -->
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full rounded-md bg-indigo-500 py-2 px-4 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors"
+                >
+                    Register
+                </button>
+            </div>
+        {{ form_end(registrationForm) }}
+
+        <!-- Sign In Link -->
+        <div class="rounded-lg bg-gray-800 p-4 border border-gray-700 text-center text-sm text-gray-400">
+            <p>Already have an account? <a href="{{ path('app_login') }}" class="text-indigo-400 hover:underline">Sign in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

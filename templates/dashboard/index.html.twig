@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Redirecting...{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-900 flex items-center justify-center">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+        <p class="text-gray-400">Redirecting you to your dashboard...</p>
+    </div>
+</div>
+
+<script>
+    // This page redirects based on user role
+    window.location.href = '{{ app.user and app.user.roles[0] == 'ROLE_ADMIN' ? path('app_admin_dashboard') : path('app_staff_dashboard') }}';
+</script>
+{% endblock %}
+

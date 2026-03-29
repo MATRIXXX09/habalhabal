@@ -1,0 +1,30 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Home - Habal Habal Management System{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto bg-gray-800 rounded-lg shadow-lg p-8">
+        <div class="flex justify-center mb-6">
+            <img class="h-12 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
+        </div>
+        
+        <h1 class="text-3xl font-bold text-white text-center mb-8">Habal Habal Management</h1>
+        
+        <p class="text-gray-400 text-center mb-8">
+            Welcome to the Habal Habal fleet management system. All login functionality has been removed for this version.
+        </p>
+        
+        <div class="space-y-4 text-gray-400 text-center">
+            <p class="text-sm">Database: Clean and Ready</p>
+            <p class="text-sm">Authentication: Disabled</p>
+            <p class="text-sm">Status: Ready for new features</p>
+            <div class="mt-6">
+                <a href="{{ path('app_login') }}" class="inline-block rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white hover:bg-indigo-700">
+                    Sign in
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

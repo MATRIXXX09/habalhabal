@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add New Vehicle{% endblock %}
+
+{% block body %}
+<div class="min-h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Add New Vehicle</h1>
+                    <p class="text-gray-400">Enter vehicle details below</p>
+                </div>
+                <a href="{{ path('app_admin_vehicles') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Back to List
+                </a>
+            </div>
+
+            <div class="bg-gray-800/50 shadow-xl rounded-lg overflow-hidden border border-gray-700">
+                {{ form_start(form, {'attr': {'class': 'space-y-6 p-6'}}) }}
+                
+                {# Display form-wide errors #}
+                {% if form.vars.errors|length > 0 %}
+                    <div class="rounded-md bg-red-50/10 border border-red-500/30 p-4">
+                        <div class="flex">
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-400">Form Errors</h3>
+                                <ul class="mt-2 list-disc list-inside text-sm text-red-300">
+                                    {% for error in form.vars.errors %}
+                                        <li>{{ error.message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                    <!-- Import from Rider Data Section -->
+                    <div class="mb-6 pb-6 border-b border-gray-700/50">
+                        <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold text-indigo-400 mb-3">Import from Rider Data</h3>
+                            <div>
+                                <label for="manual_rider" class="block text-sm font-medium text-gray-300 mb-2">Select Rider</label>
+                                <select id="manual_rider" class="mt-1 block w-full bg-gray-700/50 border-gray-600 text-gray-300 rounded-md focus:border-indigo-500 focus:ring-indigo-500 [&_option]:bg-slate-800 [&_option]:text-white">
+                                    <option value="">-- Select a rider --</option>
+                                    {% for rider in riders %}
+                                        <option value="{{ rider.id }}" {% if rider.id in usedRiderIds %}disabled title="This rider is already assigned to another vehicle"{% endif %}>
+                                            {{ rider.fullName }}{% if rider.name %} ({{ rider.name }}){% endif %} - {{ rider.plateNumber }}
+                                            {% if rider.id in usedRiderIds %} [ALREADY USED]{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {# Hidden field to sync with form #}
+                                {{ form_widget(form.riderHidden, {'attr': {'id': 'riderHiddenField'}}) }}
+                                <p class="text-xs text-gray-400 mt-2">Selecting a rider will auto-fill their vehicle information</p>
+                            </div>
+                            <div id="selectedRiderInfo" class="hidden mt-4 p-3 rounded-lg bg-indigo-500/20 border border-indigo-400/40">
+                                <p class="text-sm text-indigo-200">
+                                    <strong>Selected Rider:</strong> <span id="riderNameDisplay"></span>
+                                </p>
+                                <p class="text-xs text-indigo-300 mt-1">Contact: <span id="riderContactDisplay"></span></p>
+                                <p class="text-xs text-indigo-300">Vehicle: <span id="riderVehicleDisplay"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                        {# Render each field using form_row, which includes the label, widget, and errors #}
+                        <div>
+                            {{ form_row(form.type, {'attr': {'class': '[&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_row(form.model, {'attr': {'class': '[&_option]:bg-slate-800 [&_option]:text-white'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_row(form.plateNumber) }}
+                        </div>
+
+                        <div>
+                            {{ form_row(form.capacity) }}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            {{ form_row(form.currentLocation) }}
+                        </div>
+                        
+                        {# This field was missing from your original template but is in your VehicleType #}
+                        <div class="sm:col-span-2 flex items-center">
+                            {{ form_widget(form.isAvailable) }}
+                            {{ form_label(form.isAvailable, 'Is Available?', {'label_attr': {'class': 'ml-2 text-sm font-medium text-gray-300'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Add Vehicle
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const riderSelector = document.getElementById('manual_rider');
+    const riderData = {
+        {% for rider in riders %}
+            {{ rider.id }}: {
+                vehicleType: '{{ rider.vehicleType|escape('js') }}',
+                plateNumber: '{{ rider.plateNumber|escape('js') }}',
+                fullName: '{{ rider.fullName|escape('js') }}',
+                riderName: '{{ rider.name|escape('js') }}',
+                contactNumber: '{{ rider.contactNumber|escape('js') }}'
+            }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    if (!riderSelector) return;
+
+    function applyRiderData(selectedId) {
+        const infoDisplay = document.getElementById('selectedRiderInfo');
+        if (selectedId && riderData[selectedId]) {
+            const data = riderData[selectedId];
+            document.getElementById('riderNameDisplay').textContent = data.fullName + (data.riderName ? ' (' + data.riderName + ')' : '');
+            document.getElementById('riderContactDisplay').textContent = data.contactNumber;
+            document.getElementById('riderVehicleDisplay').textContent = data.vehicleType + ' - ' + data.plateNumber;
+            infoDisplay.classList.remove('hidden');
+
+            // Updated IDs to match form_row generated IDs
+            const typeSelect = document.getElementById('vehicle_type');
+            const plateInput = document.getElementById('vehicle_plateNumber');
+            const modelInput = document.getElementById('vehicle_model');
+            const capacitySelect = document.getElementById('vehicle_capacity');
+
+            if (typeSelect && data.vehicleType) {
+                for (let option of typeSelect.options) {
+                    if (option.value.toLowerCase() === data.vehicleType.toLowerCase() || option.text.toLowerCase() === data.vehicleType.toLowerCase()) {
+                        typeSelect.value = option.value;
+                        break;
+                    }
+                }
+            }
+
+            if (plateInput && data.plateNumber) {
+                plateInput.value = data.plateNumber;
+            }
+
+            if (modelInput && data.vehicleType) {
+                modelInput.value = data.vehicleType;
+            }
+        } else {
+            infoDisplay.classList.add('hidden');
+        }
+    }
+
+    riderSelector.addEventListener('change', function() {
+        applyRiderData(this.value);
+        // Sync hidden field with form
+        const hiddenField = document.getElementById('riderHiddenField');
+        if (hiddenField) {
+            hiddenField.value = this.value;
+        }
+    });
+
+    if (riderSelector.value) {
+        applyRiderData(riderSelector.value);
+    }
+});
+</script>
+{% endblock %}

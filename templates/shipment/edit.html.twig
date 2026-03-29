@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Shipment{% endblock %}
+
+{% block body %}
+<div class="min-h-full">
+    <!-- Admin Sidebar -->
+    {{ include('admin/_sidebar.html.twig') }}
+
+    <!-- Main Content -->
+    <main class="pl-72">
+        <div class="px-8 py-6">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-2xl font-semibold text-white">Edit Shipment</h1>
+                    <p class="mt-2 text-sm text-gray-400">Edit the shipment details below.</p>
+                </div>
+                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                    <a href="{{ path('app_admin_shipments') }}" class="block rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-gray-500">
+                        Back to List
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 flow-root bg-gray-800 px-6 py-8 rounded-lg">
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
+                        <div>
+                            {{ form_label(form.trackingNumber, 'Tracking Number', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.trackingNumber, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.status, 'Status', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.status, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.origin, 'Origin', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.origin, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.destination, 'Destination', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.destination, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.senderName, 'Sender Name', {'label_attr': {'class': 'block text-sm font-medium text-white'}}) }}
+                            {{ form_widget(form.senderName, {'attr': {'class': 'block w-full rounded-md border-0 bg-gray-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <a href="{{ path('app_admin_shipments') }}" class="rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-500">
+                            Cancel
+                        </a>
+                        <button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                            Update Shipment
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

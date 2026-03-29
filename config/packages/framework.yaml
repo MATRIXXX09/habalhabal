@@ -1,9 +1,17 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
+
 framework:
     secret: '%env(APP_SECRET)%'
+    default_locale: 'en'
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        enabled: true
+        cookie_secure: auto
+        cookie_samesite: lax
+    
+    trusted_proxies: '127.0.0.1'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-host', 'x-forwarded-port']
 
     #esi: true
     #fragments: true
