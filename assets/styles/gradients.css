@@ -1,35 +1,35 @@
 /* ========================================
-   GRADIENT UTILITIES
+   GRADIENT UTILITIES - Brand Colors
    ======================================== */
 
-/* Primary gradient */
+/* Primary gradient - Green to Black */
 .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #15803d 0%, #1a1a1a 100%);
 }
 
-/* Pink to red gradient */
+/* Brand Red to Green gradient */
 .gradient-bg-2 {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #dc2626 0%, #16a34a 100%);
 }
 
-/* Cyan to blue gradient */
+/* Black to Red gradient */
 .gradient-bg-3 {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #1a1a1a 0%, #b91c1c 100%);
 }
 
-/* Orange to yellow gradient */
+/* Green to Red gradient */
 .gradient-bg-4 {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #ef4444 100%);
 }
 
-/* Teal to pink gradient */
+/* Dark Green to Light Green gradient */
 .gradient-bg-5 {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, #166534 0%, #4ade80 100%);
 }
 
-/* Text gradient */
+/* Text gradient - Brand Green */
 .stat-number {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

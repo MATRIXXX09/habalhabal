@@ -31,9 +31,9 @@ class UserStatusListener implements EventSubscriberInterface
             return;
         }
 
-        // Skip check on login/logout/register pages to prevent redirect loops
+        // Skip check on login/logout/register/oauth pages to prevent redirect loops
         $route = $event->getRequest()->attributes->get('_route');
-        if (in_array($route, ['app_login', 'app_logout', 'app_register', 'app_home'])) {
+        if (in_array($route, ['app_login', 'app_logout', 'app_register', 'app_home', 'connect_google', 'connect_google_check'])) {
             return;
         }
 

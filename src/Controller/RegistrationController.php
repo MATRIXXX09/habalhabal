@@ -4,18 +4,24 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Service\EmailVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
 	#[Route('/register', name: 'app_register')]
-	public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
-	{
+	public function register(
+		Request $request,
+		UserPasswordHasherInterface $passwordHasher,
+		EntityManagerInterface $entityManager,
+		EmailVerificationService $emailVerificationService
+	): Response {
 		$user = new User();
 		$form = $this->createForm(RegistrationFormType::class, $user);
 		$form->handleRequest($request);
@@ -25,10 +31,25 @@ class RegistrationController extends AbstractController
 			$hashed = $passwordHasher->hashPassword($user, $plainPassword);
 			$user->setPassword($hashed);
 
+			// Generate verification token
+			$verificationToken = $emailVerificationService->generateVerificationToken();
+			$user->setVerificationToken($verificationToken);
+			$user->setIsVerified(false);
+
 			$entityManager->persist($user);
 			$entityManager->flush();
 
-			$this->addFlash('success', 'Registration successful. You may sign in now.');
+			// Generate verification URL
+			$verificationUrl = $this->generateUrl(
+				'app_verify_email',
+				['token' => $verificationToken],
+				UrlGeneratorInterface::ABSOLUTE_URL
+			);
+
+			// Send verification email
+			$emailVerificationService->sendVerificationEmail($user, $verificationUrl);
+
+			$this->addFlash('success', 'Registration successful! Please check your email to verify your account.');
 
 			return $this->redirectToRoute('app_login');
 		}

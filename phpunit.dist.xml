@@ -15,6 +15,17 @@
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
+
+        <!-- ###+ lexik/jwt-authentication-bundle ### -->
+        <env name="JWT_SECRET_KEY" value="%kernel.project_dir%/config/jwt/private.pem"/>
+        <env name="JWT_PUBLIC_KEY" value="%kernel.project_dir%/config/jwt/public.pem"/>
+        <env name="JWT_PASSPHRASE" value="ac87905c037b1d956c4a1f9593101576315be2f576e54a9139dfc2a56510a6c2"/>
+        <!-- ###- lexik/jwt-authentication-bundle ### -->
+
+        <!-- ###+ symfony/brevo-mailer ### -->
+        <!-- MAILER_DSN=brevo+api://KEY@default -->
+        <!-- MAILER_DSN=brevo+smtp://USERNAME:PASSWORD@default -->
+        <!-- ###- symfony/brevo-mailer ### -->
     </php>
 
     <testsuites>

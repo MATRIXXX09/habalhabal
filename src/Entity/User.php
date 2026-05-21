@@ -49,6 +49,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $disabledAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $username = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $verificationToken = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -217,6 +223,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDisabledAt(?\DateTimeInterface $disabledAt): static
     {
         $this->disabledAt = $disabledAt;
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): static
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $verificationToken): static
+    {
+        $this->verificationToken = $verificationToken;
         return $this;
     }
 }

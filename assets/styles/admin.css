@@ -16,7 +16,7 @@
     top: 0;
     height: 100%;
     width: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #15803d 0%, #dc2626 100%);
     transform: scaleY(0);
     transition: transform 0.3s ease;
 }
@@ -27,14 +27,14 @@
 }
 
 .nav-item:hover {
-    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(22, 163, 74, 0.1) 0%, transparent 100%);
     transform: translateX(4px);
 }
 
 .nav-item.active {
-    background: linear-gradient(90deg, rgba(102, 126, 234, 0.15) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(22, 163, 74, 0.15) 0%, transparent 100%);
     border-left: 4px solid;
-    border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+    border-image: linear-gradient(135deg, #15803d 0%, #dc2626 100%) 1;
 }
 
 .nav-icon {
@@ -47,7 +47,7 @@
 
 /* Sidebar Styling */
 .sidebar-glow {
-    box-shadow: 0 0 40px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 40px rgba(22, 163, 74, 0.15);
 }
 
 /* Custom Scrollbar for Sidebar */
@@ -61,19 +61,19 @@ nav::-webkit-scrollbar-track {
 }
 
 nav::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #15803d 0%, #dc2626 100%);
     border-radius: 10px;
     transition: all 0.3s ease;
 }
 
 nav::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #7c8eff 0%, #8a5bb5 100%);
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #22c55e 0%, #ef4444 100%);
+    box-shadow: 0 0 10px rgba(22, 163, 74, 0.4);
 }
 
 /* Firefox scrollbar */
 nav {
-    scrollbar-color: #667eea rgba(31, 41, 55, 0.5);
+    scrollbar-color: #15803d rgba(31, 41, 55, 0.5);
     scrollbar-width: thin;
 }
 

@@ -1,6 +1,6 @@
 import './bootstrap.js';
 import './styles/app.css';
-import './styles/landing-page.css';
+//import './styles/landing-page.css';
 import 'tw-elements';
 
 // Import tw-elements with correct path

@@ -43,7 +43,7 @@ select option {
 
 /* Style for selected option */
 select option:checked {
-    background-color: #4f46e5;
+    background-color: #15803d;
     color: white;
 }
 .booking-type-select {

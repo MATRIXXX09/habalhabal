@@ -14,17 +14,17 @@ class Message
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, nullable: true)]
     private ?string $senderEmail = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $sender = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $subject = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $message = null;
 
     #[ORM\Column(type: 'datetime')]
@@ -34,8 +34,17 @@ class Message
     private ?\DateTimeInterface $readAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $admin = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $status = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $reply = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $repliedAt = null;
 
     public function __construct()
     {
@@ -132,6 +141,39 @@ class Message
     public function markAsRead(): static
     {
         $this->readAt = new \DateTime();
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getReply(): ?string
+    {
+        return $this->reply;
+    }
+
+    public function setReply(?string $reply): static
+    {
+        $this->reply = $reply;
+        return $this;
+    }
+
+    public function getRepliedAt(): ?\DateTimeInterface
+    {
+        return $this->repliedAt;
+    }
+
+    public function setRepliedAt(?\DateTimeInterface $repliedAt): static
+    {
+        $this->repliedAt = $repliedAt;
         return $this;
     }
 }

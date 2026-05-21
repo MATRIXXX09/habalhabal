@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Message;
 use App\Entity\User;
+use App\Entity\Complaint;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,10 +75,12 @@ class MessageController extends AbstractController
             throw $this->createAccessDeniedException('Not an admin');
         }
 
-        $messages = $this->entityManager->getRepository(Message::class)->findAllMessagesForAdmin($admin);
+        $messages = $this->entityManager->getRepository(Message::class)->findAll();
+        $complaints = $this->entityManager->getRepository(Complaint::class)->findAll();
 
         return $this->render('admin/messages.html.twig', [
             'messages' => $messages,
+            'complaints' => $complaints,
         ]);
     }
 

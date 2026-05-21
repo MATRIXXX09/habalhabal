@@ -3,198 +3,420 @@
 {% block title %}Habal Habal - Professional Motorcycle Delivery Service{% endblock %}
 
 {% block body %}
-<div class="bg-gray-900 text-white">
+<div class="bg-gradient-to-b from-black via-gray-900 to-black text-white">
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60 border-b border-gray-800">
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md supports-[backdrop-filter]:bg-black/70 border-b border-red-500/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-3">
                     <img class="h-10 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
-                    <span class="text-xl font-bold">Habal Habal</span>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-green-400 to-red-500 bg-clip-text text-transparent">Habal Habal</span>
                 </div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="{{ path('app_landing') }}#features" class="hover:text-indigo-400 transition">Features</a>
-                    <a href="{{ path('app_about') }}" class="hover:text-indigo-400 transition">About</a>
-                    <a href="{{ path('app_contact') }}" class="hover:text-indigo-400 transition">Contact</a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-green-400 p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ path('app_about') }}" class="text-gray-300 hover:text-green-400 transition duration-300">About</a>
+                    <a href="{{ path('app_contact') }}" class="text-gray-300 hover:text-green-400 transition duration-300">Contact</a>
+                    <a href="{{ path('app_login') }}" class="text-gray-300 hover:text-green-400 transition duration-300 px-4 py-2">Sign In</a>
+                    <a href="{{ path('app_register') }}" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold px-6 py-2 rounded-lg transition duration-300 shadow-lg shadow-red-600/30">Register</a>
                 </div>
-                <div class="flex space-x-4">
-                    <a href="{{ path('app_login') }}" class="text-gray-300 hover:text-white transition">Sign In</a>
-                    <a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">Register</a>
+            </div>
+            
+            <!-- Mobile Navigation Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2 border-t border-gray-800/50">
+                <a href="{{ path('app_about') }}" class="block text-gray-300 hover:text-green-400 py-2 px-4 rounded transition">About</a>
+                <a href="{{ path('app_contact') }}" class="block text-gray-300 hover:text-green-400 py-2 px-4 rounded transition">Contact</a>
+                <div class="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-800/50">
+                    <a href="{{ path('app_login') }}" class="block text-center text-gray-300 hover:text-green-400 py-2 px-4">Sign In</a>
+                    <a href="{{ path('app_register') }}" class="block text-center bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold py-2 px-4 rounded-lg">Register</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
-        <div class="absolute inset-0 bg-gradient-to-b from-indigo-900/20 to-transparent"></div>
-        <div class="relative z-10 text-center max-w-4xl mx-auto">
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                Fast, Reliable Delivery Service
+    <section class="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/parcel.png') }}');">
+        <!-- Background elements -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/60"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-red-900/10"></div>
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-red-600/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-red-600/10 rounded-full blur-3xl"></div>
+        
+        <div class="relative z-10 text-center max-w-5xl mx-auto">
+            <div class="mb-8 inline-block">
+                <span class="text-green-400 text-sm font-semibold tracking-widest uppercase bg-black/50 border border-red-500/30 rounded-full px-4 py-2">⚡ Fastest Delivery in the City</span>
+            </div>
+            <h1 class="text-6xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight tracking-tight">
+                <span class="bg-gradient-to-r from-red-200 via-green-400 to-red-600 bg-clip-text text-transparent">Fast, Reliable</span>
+                <br>
+                <span class="text-white">Delivery Service</span>
             </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-8">
-                Experience the fastest motorcycle delivery service in the city. Real-time tracking, professional riders, and 24/7 availability.
+            <p class="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+                Get your parcels delivered in 15-30 minutes with real-time tracking, professional riders, and guaranteed reliability. Available 24/7.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition transform hover:scale-105">
-                    Get Started
+                <a href="{{ path('app_register') }}" class="group relative bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-4 px-10 rounded-xl transition transform hover:scale-105 duration-300 shadow-lg shadow-red-600/50">
+                    Get Started Now
+                    <span class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition duration-300"></span>
                 </a>
-                <a href="#features" class="border-2 border-indigo-600 hover:border-indigo-500 text-white font-bold py-3 px-8 rounded-lg transition">
+                <a href="#features" class="group border-2 border-green-500/50 hover:border-green-400 text-white font-bold py-4 px-10 rounded-xl transition duration-300 hover:bg-green-950/30">
                     Learn More
+                    <span class="inline-block ml-2 group-hover:translate-y-1 transition duration-300">↓</span>
                 </a>
+            </div>
+            
+            <!-- Trust indicators -->
+            <div class="mt-16 flex flex-col sm:flex-row justify-center items-center gap-8 text-gray-400 text-sm">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4.707-10.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></path></svg>
+                    <span>500K+ Deliveries Completed</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4.707-10.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></path></svg>
+                    <span>98% Customer Satisfaction</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4.707-10.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></path></svg>
+                    <span>1000+ Professional Riders</span>
+                </div>
             </div>
         </div>
     </section>
 
+
+
     <!-- Features Section -->
-    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/50">
+    <section id="features" class="py-24 px-4 sm:px-6 lg:px-8 relative">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">Why Choose Habal Habal?</h2>
-                <p class="text-gray-400 text-lg">Everything you need for reliable deliveries</p>
+            <div class="text-center mb-20">
+                <span class="text-green-400 text-sm font-semibold tracking-widest uppercase">Why Choose Us</span>
+                <h2 class="text-5xl md:text-6xl font-bold mb-6 mt-4">
+                    <span class="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Powerful Features</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Everything you need for fast and reliable delivery</p>
             </div>
-            
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1: Lightning Fast -->
+                <div class="group bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="bg-gradient-to-br from-red-600 to-red-700 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300 shadow-lg shadow-red-600/50">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Lightning Fast</h3>
+                    <p class="text-gray-400 leading-relaxed">Get your parcels delivered in just 15-30 minutes with our lightning-fast dispatch system and experienced riders.</p>
+                </div>
+
+                <!-- Feature 2: Live Tracking -->
+                <div class="group bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="bg-gradient-to-br from-red-600 to-red-700 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300 shadow-lg shadow-red-600/50">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19m-7 12h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2zm0 0a9 9 0 018-16m0 0a9 9 0 00-8 16m7-10a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Live Tracking</h3>
+                    <p class="text-gray-400 leading-relaxed">Track your delivery in real-time with GPS location updates, rider details, and estimated arrival time.</p>
+                </div>
+
+                <!-- Feature 3: Professional Team -->
+                <div class="group bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="bg-gradient-to-br from-red-600 to-red-700 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300 shadow-lg shadow-red-600/50">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 11H9m6 8a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Professional Team</h3>
+                    <p class="text-gray-400 leading-relaxed">Our vetted and trained riders are courteous, reliable, and fully insured for safe deliveries every time.</p>
+                </div>
+
+                <!-- Feature 4: 24/7 Support -->
+                <div class="group bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="bg-gradient-to-br from-red-600 to-red-700 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300 shadow-lg shadow-red-600/50">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5-4a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">24/7 Support</h3>
+                    <p class="text-gray-400 leading-relaxed">Round-the-clock customer support ready to help with any questions or concerns about your delivery.</p>
+                </div>
+
+                <!-- Feature 5: Transparent Pricing -->
+                <div class="group bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="bg-gradient-to-br from-red-600 to-red-700 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300 shadow-lg shadow-red-600/50">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Transparent Pricing</h3>
+                    <p class="text-gray-400 leading-relaxed">No hidden fees. Know the exact price before confirming your order, with competitive rates and discounts available.</p>
+                </div>
+
+                <!-- Feature 6: Secure & Safe -->
+                <div class="group bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="bg-gradient-to-br from-red-600 to-red-700 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300 shadow-lg shadow-red-600/50">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-white">Secure & Safe</h3>
+                    <p class="text-gray-400 leading-relaxed">Your parcels are insured and handled with care by our professional, background-checked team.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900/50 to-transparent border-t border-red-500/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Stat 1: Deliveries -->
+                <div class="text-center bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 rounded-2xl p-8 hover:border-red-500/60 transition duration-300">
+                    <div class="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-green-400 to-red-600 bg-clip-text text-transparent">500K+</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Deliveries Completed</h3>
+                    <p class="text-gray-400">Trusted by thousands of customers daily</p>
+                </div>
+
+                <!-- Stat 2: Satisfaction -->
+                <div class="text-center bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 rounded-2xl p-8 hover:border-red-500/60 transition duration-300">
+                    <div class="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-green-400 to-red-600 bg-clip-text text-transparent">98%</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Customer Satisfaction</h3>
+                    <p class="text-gray-400">Consistently excellent service ratings</p>
+                </div>
+
+                <!-- Stat 3: Riders -->
+                <div class="text-center bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 rounded-2xl p-8 hover:border-red-500/60 transition duration-300">
+                    <div class="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-green-400 to-red-600 bg-clip-text text-transparent">1000+</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Professional Riders</h3>
+                    <p class="text-gray-400">Vetted and trained delivery experts</p>
+                </div>
+
+                <!-- Stat 4: Average Time -->
+                <div class="text-center bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 rounded-2xl p-8 hover:border-red-500/60 transition duration-300">
+                    <div class="text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-green-400 to-red-600 bg-clip-text text-transparent">15-30</div>
+                    <h3 class="text-xl font-bold text-white mb-2">Minutes Average</h3>
+                    <p class="text-gray-400">Lightning-fast delivery times</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-24 px-4 sm:px-6 lg:px-8 relative bg-gradient-to-b from-gray-900/50 to-transparent">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <span class="text-green-400 text-sm font-semibold tracking-widest uppercase">Success Stories</span>
+                <h2 class="text-5xl md:text-6xl font-bold mb-6 mt-4">
+                    <span class="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">What Our Customers Say</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Join thousands of satisfied customers using Habal Habal</p>
+            </div>
+
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-gray-900 p-8 rounded-xl border border-gray-700 hover:border-indigo-500 transition group">
-                    <div class="bg-indigo-600 w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-700 transition">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
+                <!-- Testimonial 1 -->
+                <div class="bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-red-600/50">AK</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Ahmed Khan</h3>
+                            <p class="text-gray-400 text-sm">E-Commerce Business Owner</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Lightning Fast</h3>
-                    <p class="text-gray-400">Average delivery time of 15-30 minutes. Professional riders trained for speed and safety.</p>
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"Habal Habal has completely transformed my delivery process. Fast, reliable, and professionals who care about my business. Couldn't recommend them more!"</p>
                 </div>
 
-                <!-- Feature 2 -->
-                <div class="bg-gray-900 p-8 rounded-xl border border-gray-700 hover:border-indigo-500 transition group">
-                    <div class="bg-indigo-600 w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-700 transition">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
+                <!-- Testimonial 2 -->
+                <div class="bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-red-600/50">MR</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Maria Rodriguez</h3>
+                            <p class="text-gray-400 text-sm">Restaurant Manager</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Live Tracking</h3>
-                    <p class="text-gray-400">Track your parcel in real-time with GPS. Get instant notifications at every step of delivery.</p>
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"We use Habal Habal for all our food deliveries. The delivery times are incredible, and customer satisfaction has skyrocketed. Best decision we made!"</p>
                 </div>
 
-                <!-- Feature 3 -->
-                <div class="bg-gray-900 p-8 rounded-xl border border-gray-700 hover:border-indigo-500 transition group">
-                    <div class="bg-indigo-600 w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-700 transition">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                <!-- Testimonial 3 -->
+                <div class="bg-gradient-to-br from-gray-900/50 to-gray-900/20 border border-red-500/20 hover:border-red-500/60 rounded-2xl p-8 transition duration-300 hover:shadow-xl hover:shadow-red-600/20">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-red-600/50">JT</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">James Torres</h3>
+                            <p class="text-gray-400 text-sm">Logistics Coordinator</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Professional Team</h3>
-                    <p class="text-gray-400">Verified and trained riders with background checks. Courteous service and on-time delivery guaranteed.</p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="bg-gray-900 p-8 rounded-xl border border-gray-700 hover:border-indigo-500 transition group">
-                    <div class="bg-indigo-600 w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-700 transition">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
+                        <span class="text-yellow-400">★</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">24/7 Support</h3>
-                    <p class="text-gray-400">Round-the-clock customer support. Available anytime you need us, any day of the week.</p>
-                </div>
-
-                <!-- Feature 5 -->
-                <div class="bg-gray-900 p-8 rounded-xl border border-gray-700 hover:border-indigo-500 transition group">
-                    <div class="bg-indigo-600 w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-700 transition">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Transparent Pricing</h3>
-                    <p class="text-gray-400">Competitive rates with no hidden fees. Flat rates, distance-based, or hourly options available.</p>
-                </div>
-
-                <!-- Feature 6 -->
-                <div class="bg-gray-900 p-8 rounded-xl border border-gray-700 hover:border-indigo-500 transition group">
-                    <div class="bg-indigo-600 w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:bg-indigo-700 transition">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Secure & Safe</h3>
-                    <p class="text-gray-400">Insured deliveries. Your parcel is handled with care and arrives safely at its destination.</p>
+                    <p class="text-gray-300 leading-relaxed">"Working with Habal Habal for 6 months now. Professional, punctual, and always go extra mile. Our customers consistently praise the delivery experience."</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" class="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900/50 to-transparent">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">How It Works</h2>
-                <p class="text-gray-400 text-lg">Three simple steps to get your delivery done</p>
+            <div class="text-center mb-20">
+                <span class="text-green-400 text-sm font-semibold tracking-widest uppercase">Simple Process</span>
+                <h2 class="text-5xl md:text-6xl font-bold mb-6 mt-4">
+                    <span class="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">How It Works</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Get your delivery done in three easy steps</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-12">
-                <div class="text-center">
-                    <div class="bg-indigo-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">1</div>
-                    <h3 class="text-2xl font-bold mb-3">Place Order</h3>
-                    <p class="text-gray-400">Open the app, enter your pickup and delivery locations, and confirm your order in seconds.</p>
+            <div class="grid md:grid-cols-3 gap-8 relative">
+                <!-- Connection line (desktop only) -->
+                <div class="hidden md:block absolute top-20 left-0 right-0 h-1 bg-gradient-to-r from-red-600/30 via-red-600/30 to-transparent"></div>
+
+                <div class="relative">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="bg-gradient-to-br from-red-600 to-red-700 w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-8 text-4xl font-bold shadow-lg shadow-red-600/50 relative z-10">1</div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">Place Order</h3>
+                        <p class="text-gray-400 leading-relaxed">Open the app, enter your pickup and delivery locations, and confirm your order in seconds. No hidden steps.</p>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="bg-indigo-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">2</div>
-                    <h3 class="text-2xl font-bold mb-3">Rider Assigned</h3>
-                    <p class="text-gray-400">A professional rider is instantly assigned to your delivery and heads to your pickup location.</p>
+
+                <div class="relative">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="bg-gradient-to-br from-red-600 to-red-700 w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-8 text-4xl font-bold shadow-lg shadow-red-600/50 relative z-10">2</div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">Rider Assigned</h3>
+                        <p class="text-gray-400 leading-relaxed">A professional rider is instantly assigned to your delivery and heads to your pickup location immediately.</p>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="bg-indigo-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">3</div>
-                    <h3 class="text-2xl font-bold mb-3">Delivered</h3>
-                    <p class="text-gray-400">Track your delivery in real-time and receive confirmation when your parcel arrives safely.</p>
+
+                <div class="relative">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="bg-gradient-to-br from-red-600 to-red-700 w-24 h-24 rounded-2xl flex items-center justify-center mx-auto mb-8 text-4xl font-bold shadow-lg shadow-red-600/50 relative z-10">3</div>
+                        <h3 class="text-2xl font-bold mb-4 text-white">Delivered</h3>
+                        <p class="text-gray-400 leading-relaxed">Track your delivery in real-time and receive confirmation when your parcel arrives safe and on time.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-950 border-t border-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+
+
+
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-900/40 via-red-800/20 to-red-900/40 border-t border-red-500/20 border-b border-red-500/20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">Ready to Experience Fast Delivery?</h2>
+            <p class="text-xl text-gray-300 mb-10">Join thousands of satisfied customers. Sign up now and get your first delivery done in minutes.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ path('app_register') }}" class="group relative bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-4 px-10 rounded-xl transition transform hover:scale-105 duration-300 shadow-lg shadow-red-600/50">
+                    Get Started Now
+                    <span class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-xl transition duration-300"></span>
+                </a>
+                <a href="{{ path('app_contact') }}" class="border-2 border-red-500/50 hover:border-green-400 text-white font-bold py-4 px-10 rounded-xl transition duration-300 hover:bg-black/30">
+                    Talk to Our Team
+                </a>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-black border-t border-gray-800/50 py-16 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
+            <div class="grid md:grid-cols-5 gap-12 mb-12">
                 <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <img class="h-8 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
-                        <span class="font-bold">Habal Habal</span>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <img class="h-10 w-auto" src="{{ asset('images/HABAL.png') }}" alt="Habal-habal">
+                        <span class="text-xl font-bold bg-gradient-to-r from-green-400 to-red-600 bg-clip-text text-transparent">Habal Habal</span>
                     </div>
-                    <p class="text-gray-400 text-sm">Fast and reliable motorcycle delivery service.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">Fast and reliable motorcycle delivery service for your business and personal needs.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
-                        <li><a href="#about" class="hover:text-white transition">About</a></li>
-                        <li><a href="{{ path('app_login') }}" class="hover:text-white transition">Sign In</a></li>
+                    <h4 class="font-bold mb-6 text-white">Product</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#features" class="hover:text-green-400 transition duration-300">Features</a></li>
+                        <li><a href="#stats" class="hover:text-green-400 transition duration-300">Pricing</a></li>
+                        <li><a href="#testimonials" class="hover:text-green-400 transition duration-300">Reviews</a></li>
+                        <li><a href="{{ path('app_contact') }}" class="hover:text-green-400 transition duration-300">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Support</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="#contact" class="hover:text-white transition">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-                        <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                    <h4 class="font-bold mb-6 text-white">Company</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="{{ path('app_about') }}" class="hover:text-green-400 transition duration-300">About Us</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Blog</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Careers</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Press</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Legal</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                    <h4 class="font-bold mb-6 text-white">Support</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Help Center</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">FAQ</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Safety</a></li>
+                        <li><a href="{{ path('app_contact') }}" class="hover:text-green-400 transition duration-300">Contact Support</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-white">Legal</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition duration-300">Compliance</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 pt-8">
-                <p class="text-center text-gray-500 text-sm">&copy; 2026 Habal Habal Management System. All rights reserved.</p>
+            <div class="border-t border-gray-800/50 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 text-sm">&copy; 2026 Habal Habal. All rights reserved.</p>
+                    <div class="flex gap-6 mt-6 md:mt-0">
+                        <a href="#" class="text-gray-500 hover:text-green-400 transition duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-green-400 transition duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417a9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-green-400 transition duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.005 12.005 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
 </div>
 
 <script>
+// Mobile menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close menu when a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    }
+});
+
 // Smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -207,3 +429,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 </script>
 {% endblock %}
+
+
+
+
+
+

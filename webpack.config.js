@@ -22,7 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
 
-    .addStyleEntry('landing-page', './assets/styles/landing-page.css')
+    //.addStyleEntry('landing-page', './assets/styles/landing-page.css')
 
     // Enable Symfony UX Stimulus integration
     .enableStimulusBridge('./assets/controllers.json')  // Use this instead of enableStimulusController
@@ -44,6 +44,13 @@ Encore
     .enableVersioning(Encore.isProduction())
     .addAliases({
         'tw-elements': 'tw-elements/dist/js/tw-elements.umd.min.js'
+    })
+    
+    // Enable dev server for live reload
+    .configureDevServerOptions(options => {
+        options.https = false;
+        options.host = 'localhost';
+        options.port = 8080;
     })
 ;
 

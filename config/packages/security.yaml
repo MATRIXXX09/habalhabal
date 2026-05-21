@@ -20,8 +20,8 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticators:
-                - App\Security\LoginFormAuthenticator
                 - App\Security\GoogleAuthenticator
+                - App\Security\LoginFormAuthenticator
             entry_point: App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
@@ -31,6 +31,13 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/staff, roles: ROLE_STAFF }
         - { path: ^/dashboard, roles: [ROLE_ADMIN, ROLE_STAFF] }
+        - { path: ^/connect/google, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        # - { path: ^/api/(shipment|shipments|list-shipment)$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/verify-email, roles: PUBLIC_ACCESS }
+        - { path: ^/api/resend-verification, roles: PUBLIC_ACCESS }
+        - { path: ^/verify-email, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
 
