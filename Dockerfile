@@ -22,11 +22,15 @@ COPY composer.json composer.lock ./
 
 RUN composer install --no-interaction --no-scripts --optimize-autoloader --no-dev
 
+COPY package.json package-lock.json ./
+RUN npm ci
+
 COPY . .
 
 RUN composer install --no-interaction --optimize-autoloader --no-dev --no-ansi
 RUN if [ ! -f bin/console ]; then echo "ERROR: bin/console missing" && ls -la && false; fi
-RUN php bin/console importmap:install --no-interaction
+RUN npm run build
+RUN if php bin/console list --format=txt | grep -q "^  importmap:"; then php bin/console importmap:install --no-interaction; fi
 
 RUN php bin/console cache:warmup --env=prod --no-debug || true
 
