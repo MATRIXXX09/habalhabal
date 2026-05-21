@@ -5,6 +5,8 @@ echo "Migrating..."
 php bin/console doctrine:migrations:migrate --env=prod --no-interaction
 
 mkdir -p /app/var/sessions
+chown -R www-data:www-data /app/var/sessions
+chmod -R 775 /app/var/sessions
 
 echo "Clearing cache..."
 php bin/console cache:clear --env=prod --no-warmup || true
