@@ -4,8 +4,7 @@ set -e
 echo "Migrating..."
 php bin/console doctrine:migrations:migrate --env=prod --no-interaction
 
-mkdir -p /tmp/sessions
-chmod 1777 /tmp/sessions
+mkdir -p /app/var/sessions
 
 echo "Clearing cache..."
 php bin/console cache:clear --env=prod --no-warmup || true
