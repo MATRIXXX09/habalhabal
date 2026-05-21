@@ -4,10 +4,11 @@ set -e
 echo "Migrating..."
 php bin/console doctrine:migrations:migrate --env=prod --no-interaction
 
+mkdir -p /tmp/sessions
+chmod 1777 /tmp/sessions
+
 echo "Clearing cache..."
 php bin/console cache:clear --env=prod --no-warmup || true
-
-mkdir -p /tmp/sessions
 
 echo "Starting PHP-FPM..."
 php-fpm -F &
