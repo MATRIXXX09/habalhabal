@@ -9,6 +9,7 @@ framework:
         enabled: true
         cookie_secure: auto
         cookie_samesite: lax
+        save_path: /tmp/sessions
     
     trusted_proxies: '127.0.0.1'
     trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-host', 'x-forwarded-port']
