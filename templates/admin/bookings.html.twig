@@ -50,6 +50,7 @@
                                 <th class="px-6 py-4 text-left text-gray-200 font-semibold">Status</th>
                                 <th class="px-6 py-4 text-left text-gray-200 font-semibold">Driver</th>
                                 <th class="px-6 py-4 text-left text-gray-200 font-semibold">Created By</th>
+                                <th class="px-6 py-4 text-left text-gray-200 font-semibold">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,6 +103,16 @@
                                         {% else %}
                                             <span class="text-gray-400 italic">Unknown</span>
                                         {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-wrap gap-2">
+                                            <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="px-3 py-1 bg-indigo-600/20 text-indigo-200 rounded hover:bg-indigo-600/40 transition text-xs font-semibold">
+                                                View
+                                            </a>
+                                            <a href="{{ path('staff_booking_edit', {id: booking.id}) }}" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold">
+                                                Edit
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}

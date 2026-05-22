@@ -270,6 +270,10 @@ class StaffBookingController extends AbstractController
 
     private function checkOwnership(Booking $booking): void
     {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
         $currentUser = $this->getUser();
         $createdBy = $booking->getCreatedBy();
 
