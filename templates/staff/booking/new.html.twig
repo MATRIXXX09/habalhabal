@@ -49,6 +49,14 @@
                             {{ form_errors(form.bookingType) }}
                         </div>
 
+                        {% if form.status is defined %}
+                            <div class="space-y-2">
+                                <label class="block text-indigo-200 font-semibold">{{ form_label(form.status) }}</label>
+                                {{ form_widget(form.status, {'attr': {'class': 'w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none focus:border-indigo-400 [&_option]:bg-slate-800 [&_option]:text-white', 'disabled': 'disabled'}}) }}
+                                {{ form_errors(form.status) }}
+                            </div>
+                        {% endif %}
+
                         <!-- Customer Information -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-2">

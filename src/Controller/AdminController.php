@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Complaint;
+use App\Entity\Booking;
 use App\Entity\Shipment;
 use App\Entity\Vehicle;
 use App\Entity\Rider;
@@ -308,6 +309,30 @@ class AdminController extends AbstractController
     {
         return $this->render('admin/bookings.html.twig', [
             'bookings' => $bookingRepository->findAllOrdered(),
+        ]);
+    }
+
+    #[Route('/bookings/{id}/edit', name: 'app_admin_booking_edit', methods: ['GET', 'POST'])]
+    public function editBooking(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(
+            \App\Form\BookingType::class,
+            $booking,
+            ['edit_mode' => true]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $booking->setUpdatedAt(new \DateTime());
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Booking updated successfully!');
+            return $this->redirectToRoute('app_admin_bookings');
+        }
+
+        return $this->render('staff/booking/edit.html.twig', [
+            'form' => $form,
+            'booking' => $booking,
         ]);
     }
 

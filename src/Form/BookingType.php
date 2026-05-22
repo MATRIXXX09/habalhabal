@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Booking;
-use App\Entity\Rider;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -119,12 +117,30 @@ class BookingType extends AbstractType
                 'attr' => ['class' => 'form-textarea', 'rows' => 3, 'placeholder' => 'Any special handling or delivery instructions'],
             ])
         ;
+
+        if ($options['edit_mode']) {
+            $builder->add('status', ChoiceType::class, [
+                'choices' => [
+                    'Pending' => 'pending',
+                    'Confirmed' => 'confirmed',
+                    'Assigned' => 'assigned',
+                    'In Transit' => 'in_transit',
+                    'Completed' => 'completed',
+                    'Cancelled' => 'cancelled',
+                ],
+                'label' => 'Status',
+                'required' => false,
+                'attr' => ['class' => 'form-select'],
+                'row_attr' => ['class' => 'booking-status-field'],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Booking::class,
+            'edit_mode' => false,
         ]);
     }
 }

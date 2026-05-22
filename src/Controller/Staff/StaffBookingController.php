@@ -40,7 +40,9 @@ class StaffBookingController extends AbstractController
     {
         $this->assertBookingAccess();
         $booking = new Booking();
-        $form = $this->createForm(BookingType::class, $booking);
+        $form = $this->createForm(BookingType::class, $booking, [
+            'edit_mode' => false,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -105,13 +107,9 @@ class StaffBookingController extends AbstractController
         $this->assertBookingAccess();
         $this->checkOwnership($booking);
 
-        // Don't allow editing if booking is already assigned or completed
-        if (in_array($booking->getStatus(), ['assigned', 'in_transit', 'completed', 'cancelled'])) {
-            $this->addFlash('error', 'Cannot edit a booking in this status.');
-            return $this->redirectToRoute('staff_booking_show', ['id' => $booking->getId()]);
-        }
-
-        $form = $this->createForm(BookingType::class, $booking);
+        $form = $this->createForm(BookingType::class, $booking, [
+            'edit_mode' => true,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
