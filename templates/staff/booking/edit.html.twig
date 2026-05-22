@@ -11,7 +11,7 @@
             <!-- Header Section -->
             <div class="mb-12">
                 <div class="flex items-center gap-4">
-                    <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="text-indigo-400 hover:text-indigo-300">
+                    <a href="{{ path(back_route|default('staff_booking_show'), {id: booking.id}) }}" class="text-indigo-400 hover:text-indigo-300">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
@@ -143,7 +143,7 @@
                             <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition shadow-lg hover:shadow-xl">
                                 Update Booking
                             </button>
-                            <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-3 rounded-lg transition border border-white/20 text-center">
+                            <a href="{{ path(cancel_route|default(back_route|default('staff_booking_show')), {id: booking.id}) }}" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-3 rounded-lg transition border border-white/20 text-center">
                                 Cancel
                             </a>
                         </div>

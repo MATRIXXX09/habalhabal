@@ -105,7 +105,21 @@
                                         {% endif %}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex gap-2">
+                                        <form action="{{ path('staff_booking_status_update', {id: booking.id}) }}" method="POST" class="flex flex-wrap items-center gap-2" data-booking-status-form>
+                                            <input type="hidden" name="_token" value="{{ csrf_token('booking_status_' ~ booking.id) }}">
+                                            <select name="status" class="px-3 py-1 rounded bg-slate-800 border border-white/20 text-white text-xs focus:outline-none focus:border-indigo-400" data-booking-status-select>
+                                                <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
+                                                <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                                <option value="assigned" {% if booking.status == 'assigned' %}selected{% endif %}>Assigned</option>
+                                                <option value="in_transit" {% if booking.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                                                <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
+                                                <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                            </select>
+                                            <button type="submit" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold" data-booking-status-button>
+                                                Update Status
+                                            </button>
+                                        </form>
+                                        <div class="flex gap-2 mt-2">
                                             <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="px-3 py-1 bg-indigo-600/20 text-indigo-200 rounded hover:bg-indigo-600/40 transition text-xs font-semibold">
                                                 View
                                             </a>
@@ -169,5 +183,73 @@
     searchInput.addEventListener('input', filterTable);
     statusFilter.addEventListener('change', filterTable);
     typeFilter.addEventListener('change', filterTable);
+
+    const statusLabels = {
+        pending: 'Pending',
+        confirmed: 'Confirmed',
+        assigned: 'Assigned',
+        in_transit: 'In Transit',
+        completed: 'Completed',
+        cancelled: 'Cancelled',
+    };
+
+    const statusClasses = {
+        pending: 'bg-yellow-500/20 text-yellow-200',
+        confirmed: 'bg-blue-500/20 text-blue-200',
+        assigned: 'bg-cyan-500/20 text-cyan-200',
+        in_transit: 'bg-orange-500/20 text-orange-200',
+        completed: 'bg-green-500/20 text-green-200',
+        cancelled: 'bg-red-500/20 text-red-200',
+    };
+
+    document.querySelectorAll('[data-booking-status-form]').forEach(form => {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const row = form.closest('tr');
+            const select = form.querySelector('[data-booking-status-select]');
+            const button = form.querySelector('[data-booking-status-button]');
+            const originalButtonText = button.textContent;
+
+            button.disabled = true;
+            button.textContent = 'Saving...';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: new FormData(form),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Unable to update booking status.');
+                }
+
+                row.dataset.status = result.status;
+
+                const statusBadge = row.querySelector('td:nth-child(6) span');
+                if (statusBadge) {
+                    statusBadge.textContent = result.statusLabel || statusLabels[result.status] || result.status;
+                    statusBadge.className = `px-3 py-1 rounded-full text-xs font-semibold ${statusClasses[result.status] || ''}`;
+                }
+
+                select.value = result.status;
+                button.textContent = 'Updated';
+                setTimeout(() => {
+                    button.textContent = originalButtonText;
+                    button.disabled = false;
+                }, 800);
+            } catch (error) {
+                button.textContent = originalButtonText;
+                button.disabled = false;
+                alert(error.message || 'Unable to update booking status.');
+            }
+        });
+    });
 </script>
 {% endblock %}

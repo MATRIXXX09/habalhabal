@@ -118,22 +118,6 @@ class BookingType extends AbstractType
             ])
         ;
 
-        if ($options['edit_mode']) {
-            $builder->add('status', ChoiceType::class, [
-                'choices' => [
-                    'Pending' => 'pending',
-                    'Confirmed' => 'confirmed',
-                    'Assigned' => 'assigned',
-                    'In Transit' => 'in_transit',
-                    'Completed' => 'completed',
-                    'Cancelled' => 'cancelled',
-                ],
-                'label' => 'Status',
-                'required' => false,
-                'attr' => ['class' => 'form-select'],
-                'row_attr' => ['class' => 'booking-status-field'],
-            ]);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

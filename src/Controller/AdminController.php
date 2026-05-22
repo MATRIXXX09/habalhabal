@@ -312,28 +312,46 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/bookings/{id}/edit', name: 'app_admin_booking_edit', methods: ['GET', 'POST'])]
-    public function editBooking(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
+    #[Route('/bookings/{id}/status', name: 'app_admin_booking_status_update', methods: ['POST'])]
+    public function updateBookingStatus(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(
-            \App\Form\BookingType::class,
-            $booking,
-            ['edit_mode' => true]
-        );
-        $form->handleRequest($request);
+        if (!$this->isCsrfTokenValid('booking_status_' . $booking->getId(), $request->request->get('_token'))) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['success' => false, 'message' => 'Invalid booking status token.'], Response::HTTP_BAD_REQUEST);
+            }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $booking->setUpdatedAt(new \DateTime());
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Booking updated successfully!');
+            $this->addFlash('error', 'Invalid booking status token.');
             return $this->redirectToRoute('app_admin_bookings');
         }
 
-        return $this->render('staff/booking/edit.html.twig', [
-            'form' => $form,
-            'booking' => $booking,
-        ]);
+        $status = (string) $request->request->get('status', '');
+        $allowedStatuses = ['pending', 'confirmed', 'assigned', 'in_transit', 'completed', 'cancelled'];
+
+        if (!in_array($status, $allowedStatuses, true)) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['success' => false, 'message' => 'Invalid booking status selected.'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->addFlash('error', 'Invalid booking status selected.');
+            return $this->redirectToRoute('app_admin_bookings');
+        }
+
+        $booking->setStatus($status);
+        $booking->setUpdatedAt(new \DateTime());
+        $entityManager->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->json([
+                'success' => true,
+                'bookingId' => $booking->getId(),
+                'status' => $status,
+                'statusLabel' => ucfirst(str_replace('_', ' ', $status)),
+            ]);
+        }
+
+        $this->addFlash('success', 'Booking status updated successfully!');
+
+        return $this->redirectToRoute('app_admin_bookings');
     }
 
     #[Route('/users/new', name: 'app_admin_users_new')]

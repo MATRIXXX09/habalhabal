@@ -135,7 +135,54 @@ class StaffBookingController extends AbstractController
         return $this->render('staff/booking/edit.html.twig', [
             'form' => $form,
             'booking' => $booking,
+            'back_route' => 'staff_booking_show',
+            'cancel_route' => 'staff_booking_show',
         ]);
+    }
+
+    #[Route('/{id}/status', name: 'status_update', methods: ['POST'])]
+    public function updateStatus(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    {
+        $this->assertBookingAccess();
+        $this->checkOwnership($booking);
+
+        if (!$this->isCsrfTokenValid('booking_status_' . $booking->getId(), $request->request->get('_token'))) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => 'Invalid booking status token.'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->addFlash('error', 'Invalid booking status token.');
+            return $this->redirectToRoute('staff_booking_index');
+        }
+
+        $status = (string) $request->request->get('status', '');
+        $allowedStatuses = ['pending', 'confirmed', 'assigned', 'in_transit', 'completed', 'cancelled'];
+
+        if (!in_array($status, $allowedStatuses, true)) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => 'Invalid booking status selected.'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->addFlash('error', 'Invalid booking status selected.');
+            return $this->redirectToRoute('staff_booking_index');
+        }
+
+        $booking->setStatus($status);
+        $booking->setUpdatedAt(new \DateTime());
+        $em->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->json([
+                'success' => true,
+                'bookingId' => $booking->getId(),
+                'status' => $status,
+                'statusLabel' => ucfirst(str_replace('_', ' ', $status)),
+            ]);
+        }
+
+        $this->addFlash('success', 'Booking status updated successfully!');
+
+        return $this->redirectToRoute('staff_booking_index');
     }
 
     #[Route('/{id}/assign-driver/{driverId}', name: 'assign_driver', methods: ['POST'])]
