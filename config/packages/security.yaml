@@ -29,6 +29,7 @@ security:
     
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/staff/bookings, roles: [ROLE_STAFF, ROLE_ADMIN] }
         - { path: ^/staff, roles: ROLE_STAFF }
         - { path: ^/dashboard, roles: [ROLE_ADMIN, ROLE_STAFF] }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }

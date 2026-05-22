@@ -14,10 +14,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/staff/bookings', name: 'staff_booking_')]
-#[IsGranted('ROLE_STAFF')]
 class StaffBookingController extends AbstractController
 {
     public function __construct(
@@ -29,6 +27,7 @@ class StaffBookingController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): Response
     {
+        $this->assertBookingAccess();
         $bookings = $this->bookingRepository->findAllOrdered();
 
         return $this->render('staff/booking/index.html.twig', [
@@ -39,6 +38,7 @@ class StaffBookingController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
+        $this->assertBookingAccess();
         $booking = new Booking();
         $form = $this->createForm(BookingType::class, $booking);
         $form->handleRequest($request);
@@ -63,6 +63,7 @@ class StaffBookingController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(Booking $booking): Response
     {
+        $this->assertBookingAccess();
         $this->checkOwnership($booking);
 
         // Get available drivers if booking is still pending
@@ -101,6 +102,7 @@ class StaffBookingController extends AbstractController
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Booking $booking, EntityManagerInterface $em): Response
     {
+        $this->assertBookingAccess();
         $this->checkOwnership($booking);
 
         // Don't allow editing if booking is already assigned or completed
@@ -129,6 +131,7 @@ class StaffBookingController extends AbstractController
     #[Route('/{id}/assign-driver/{driverId}', name: 'assign_driver', methods: ['POST'])]
     public function assignDriver(Request $request, Booking $booking, int $driverId, EntityManagerInterface $em): Response
     {
+        $this->assertBookingAccess();
         $this->checkOwnership($booking);
 
         if (!$this->isCsrfTokenValid('assign_driver_' . $booking->getId(), $request->request->get('_token'))) {
@@ -172,6 +175,7 @@ class StaffBookingController extends AbstractController
     #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
     public function cancel(Request $request, Booking $booking, EntityManagerInterface $em): Response
     {
+        $this->assertBookingAccess();
         $this->checkOwnership($booking);
 
         if (!$this->isCsrfTokenValid('cancel_' . $booking->getId(), $request->request->get('_token'))) {
@@ -196,6 +200,7 @@ class StaffBookingController extends AbstractController
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Booking $booking, EntityManagerInterface $em): Response
     {
+        $this->assertBookingAccess();
         $this->checkOwnership($booking);
 
         if (!$this->isCsrfTokenValid('delete_' . $booking->getId(), $request->request->get('_token'))) {
@@ -220,6 +225,7 @@ class StaffBookingController extends AbstractController
     #[Route('/api/check-availability', name: 'check_availability', methods: ['POST'])]
     public function checkAvailability(Request $request, EntityManagerInterface $em): JsonResponse
     {
+        $this->assertBookingAccess();
         try {
             $data = json_decode($request->getContent(), true);
 
@@ -280,5 +286,14 @@ class StaffBookingController extends AbstractController
         if (!$createdBy instanceof User || !$currentUser instanceof User || $createdBy->getId() !== $currentUser->getId()) {
             throw $this->createAccessDeniedException('You can only manage your own bookings.');
         }
+    }
+
+    private function assertBookingAccess(): void
+    {
+        if ($this->isGranted('ROLE_STAFF') || $this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        throw $this->createAccessDeniedException('Access denied.');
     }
 }

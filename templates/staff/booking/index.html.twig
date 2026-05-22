@@ -109,11 +109,9 @@
                                             <a href="{{ path('staff_booking_show', {id: booking.id}) }}" class="px-3 py-1 bg-indigo-600/20 text-indigo-200 rounded hover:bg-indigo-600/40 transition text-xs font-semibold">
                                                 View
                                             </a>
-                                            {% if booking.status == 'pending' %}
-                                                <a href="{{ path('staff_booking_edit', {id: booking.id}) }}" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold">
-                                                    Edit
-                                                </a>
-                                            {% endif %}
+                                            <a href="{{ path('staff_booking_edit', {id: booking.id}) }}" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold">
+                                                Edit
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
