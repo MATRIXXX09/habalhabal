@@ -70,29 +70,41 @@ class StaffBookingController extends AbstractController
 
         // Get available drivers if booking is still pending
         $availableDrivers = [];
-        if ($booking->getStatus() === 'pending') {
+        if ($booking->getStatus() === 'pending' && $booking->getRequestedPickupTime() instanceof \DateTimeInterface) {
             $pickupTime = $booking->getRequestedPickupTime();
             $deliveryTime = $booking->getRequestedDeliveryTime();
-            
+
             if (!$deliveryTime) {
-                $deliveryTime = new \DateTime($pickupTime->format('Y-m-d H:i:s'));
-                $deliveryTime->modify('+2 hours');
+                // Clone or modify pickup time (handle DateTimeImmutable and DateTime)
+                if ($pickupTime instanceof \DateTimeImmutable) {
+                    $deliveryTime = $pickupTime->modify('+2 hours');
+                } else {
+                    /** @var \DateTime $tmpPickup */
+                    $tmpPickup = $pickupTime;
+                    $deliveryTime = (clone $tmpPickup);
+                    $deliveryTime->modify('+2 hours');
+                }
             }
 
-            $availableDrivers = $this->driverAvailabilityService->getAvailableDrivers(
-                $pickupTime,
-                $deliveryTime
-            );
+            try {
+                $availableDrivers = $this->driverAvailabilityService->getAvailableDrivers(
+                    $pickupTime,
+                    $deliveryTime
+                );
 
-            // Get driver stats for each available driver
-            $driversWithStats = [];
-            foreach ($availableDrivers as $driver) {
-                $driversWithStats[] = [
-                    'driver' => $driver,
-                    'stats' => $this->driverAvailabilityService->getDriverStats($driver),
-                ];
+                // Get driver stats for each available driver
+                $driversWithStats = [];
+                foreach ($availableDrivers as $driver) {
+                    $driversWithStats[] = [
+                        'driver' => $driver,
+                        'stats' => $this->driverAvailabilityService->getDriverStats($driver),
+                    ];
+                }
+                $availableDrivers = $driversWithStats;
+            } catch (\Throwable $e) {
+                // Don't let driver-availability failures break the page; show an empty list instead
+                $availableDrivers = [];
             }
-            $availableDrivers = $driversWithStats;
         }
 
         return $this->render('staff/booking/show.html.twig', [
