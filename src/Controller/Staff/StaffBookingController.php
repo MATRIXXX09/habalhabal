@@ -261,6 +261,10 @@ class StaffBookingController extends AbstractController
         $this->checkOwnership($booking);
 
         if (!$this->isCsrfTokenValid('delete_' . $booking->getId(), $request->request->get('_token'))) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => 'Invalid token'], Response::HTTP_BAD_REQUEST);
+            }
+
             return new JsonResponse(['error' => 'Invalid token'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -271,6 +275,13 @@ class StaffBookingController extends AbstractController
 
         $em->remove($booking);
         $em->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->json([
+                'success' => true,
+                'bookingId' => $booking->getId(),
+            ]);
+        }
 
         $this->addFlash('success', 'Booking deleted successfully!');
         return $this->redirectToRoute('staff_booking_index');

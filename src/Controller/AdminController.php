@@ -354,6 +354,33 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_bookings');
     }
 
+    #[Route('/bookings/{id}/delete', name: 'app_admin_booking_delete', methods: ['POST'])]
+    public function deleteBooking(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isCsrfTokenValid('booking_delete_' . $booking->getId(), $request->request->get('_token'))) {
+            if ($request->isXmlHttpRequest()) {
+                return $this->json(['success' => false, 'message' => 'Invalid booking delete token.'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $this->addFlash('error', 'Invalid booking delete token.');
+            return $this->redirectToRoute('app_admin_bookings');
+        }
+
+        $entityManager->remove($booking);
+        $entityManager->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->json([
+                'success' => true,
+                'bookingId' => $booking->getId(),
+            ]);
+        }
+
+        $this->addFlash('success', 'Booking deleted successfully!');
+
+        return $this->redirectToRoute('app_admin_bookings');
+    }
+
     #[Route('/users/new', name: 'app_admin_users_new')]
     #[IsGranted('ROLE_ADMIN')]
     public function newUser(

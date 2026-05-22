@@ -105,20 +105,29 @@
                                         {% endif %}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <form action="{{ path('app_admin_booking_status_update', {id: booking.id}) }}" method="POST" class="flex flex-wrap items-center gap-2" data-booking-status-form>
-                                            <input type="hidden" name="_token" value="{{ csrf_token('booking_status_' ~ booking.id) }}">
-                                            <select name="status" class="px-3 py-1 rounded bg-slate-800 border border-white/20 text-white text-xs focus:outline-none focus:border-green-400" data-booking-status-select>
-                                                <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
-                                                <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
-                                                <option value="assigned" {% if booking.status == 'assigned' %}selected{% endif %}>Assigned</option>
-                                                <option value="in_transit" {% if booking.status == 'in_transit' %}selected{% endif %}>In Transit</option>
-                                                <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
-                                                <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
-                                            </select>
-                                            <button type="submit" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold" data-booking-status-button>
-                                                Update Status
-                                            </button>
-                                        </form>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <form action="{{ path('app_admin_booking_status_update', {id: booking.id}) }}" method="POST" class="flex flex-wrap items-center gap-2" data-booking-status-form>
+                                                <input type="hidden" name="_token" value="{{ csrf_token('booking_status_' ~ booking.id) }}">
+                                                <select name="status" class="px-3 py-1 rounded bg-slate-800 border border-white/20 text-white text-xs focus:outline-none focus:border-green-400" data-booking-status-select>
+                                                    <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
+                                                    <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                                    <option value="assigned" {% if booking.status == 'assigned' %}selected{% endif %}>Assigned</option>
+                                                    <option value="in_transit" {% if booking.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                                                    <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
+                                                    <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                                </select>
+                                                <button type="submit" class="px-3 py-1 bg-blue-600/20 text-blue-200 rounded hover:bg-blue-600/40 transition text-xs font-semibold" data-booking-status-button>
+                                                    Update Status
+                                                </button>
+                                            </form>
+
+                                            <form action="{{ path('app_admin_booking_delete', {id: booking.id}) }}" method="POST" class="flex items-center" data-booking-delete-form>
+                                                <input type="hidden" name="_token" value="{{ csrf_token('booking_delete_' ~ booking.id) }}">
+                                                <button type="submit" class="px-3 py-1 bg-red-600/20 text-red-200 rounded hover:bg-red-600/40 transition text-xs font-semibold" data-booking-delete-button>
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -233,6 +242,46 @@
                 button.textContent = originalButtonText;
                 button.disabled = false;
                 alert(error.message || 'Unable to update booking status.');
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-booking-delete-form]').forEach(form => {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!confirm('Delete this booking? This cannot be undone.')) {
+                return;
+            }
+
+            const row = form.closest('tr');
+            const button = form.querySelector('[data-booking-delete-button]');
+            const originalButtonText = button.textContent;
+
+            button.disabled = true;
+            button.textContent = 'Deleting...';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: new FormData(form),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Unable to delete booking.');
+                }
+
+                row.remove();
+            } catch (error) {
+                button.textContent = originalButtonText;
+                button.disabled = false;
+                alert(error.message || 'Unable to delete booking.');
             }
         });
     });
