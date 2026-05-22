@@ -53,21 +53,19 @@ class StaffController extends AbstractController
         $myComplaints = $complaintRepository->findBy(['createdBy' => $user], ['createdAt' => 'DESC'], 10);
         $myVehicles = $vehicleRepository->findBy(['createdBy' => $user], ['createdAt' => 'DESC'], 10);
         $myRiders = $riderRepository->findBy([], ['createdAt' => 'DESC'], 10);
-        $myBookings = $bookingRepository->findBy(['createdBy' => $user], ['createdAt' => 'DESC'], 10);
 
         // Get total counts
         $totalShipments = $shipmentRepository->count(['createdBy' => $user]);
         $totalComplaints = $complaintRepository->count(['createdBy' => $user]);
         $totalVehicles = $vehicleRepository->count(['createdBy' => $user]);
         $totalRiders = $riderRepository->count([]);
-        $totalBookings = $bookingRepository->count(['createdBy' => $user]);
+        $totalBookings = $bookingRepository->count([]);
 
         return $this->render('staff/dashboard.html.twig', [
             'myShipments' => $myShipments,
             'myComplaints' => $myComplaints,
             'myVehicles' => $myVehicles,
             'myRiders' => $myRiders,
-            'myBookings' => $myBookings,
             'totalShipments' => $totalShipments,
             'totalComplaints' => $totalComplaints,
             'totalVehicles' => $totalVehicles,

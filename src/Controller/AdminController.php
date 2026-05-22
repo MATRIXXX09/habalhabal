@@ -11,9 +11,9 @@ use App\Entity\ActivityLog;
 use App\Entity\Message;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Repository\BookingRepository;
 use App\Repository\ShipmentRepository;
 use App\Repository\ComplaintRepository;
-use App\Repository\ActivityLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -300,6 +300,14 @@ class AdminController extends AbstractController
     {
         return $this->render('admin/shipments.html.twig', [
             'shipments' => $shipmentRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/bookings', name: 'app_admin_bookings')]
+    public function bookings(BookingRepository $bookingRepository): Response
+    {
+        return $this->render('admin/bookings.html.twig', [
+            'bookings' => $bookingRepository->findAllOrdered(),
         ]);
     }
 

@@ -29,8 +29,7 @@ class StaffBookingController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(): Response
     {
-        $user = $this->getUser();
-        $bookings = $this->bookingRepository->findBy(['createdBy' => $user], ['createdAt' => 'DESC']);
+        $bookings = $this->bookingRepository->findAllOrdered();
 
         return $this->render('staff/booking/index.html.twig', [
             'bookings' => $bookings,

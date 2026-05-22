@@ -73,6 +73,17 @@ class BookingRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find all bookings ordered by newest first.
+     */
+    public function findAllOrdered(): array
+    {
+        return $this->createQueryBuilder('b')
+            ->orderBy('b.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * Find active bookings (not completed or cancelled)
      */
     public function findActiveBookings(): array
