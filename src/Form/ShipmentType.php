@@ -32,6 +32,7 @@ class ShipmentType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Shipment::class,
+            'csrf_protection' => false,
         ]);
     }
 }
