@@ -32,6 +32,7 @@ class StaffShipmentController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $shipment = new Shipment();
+        $shipment->setStatus('pending');
         $form = $this->createForm(ShipmentType::class, $shipment);
         $form->handleRequest($request);
 

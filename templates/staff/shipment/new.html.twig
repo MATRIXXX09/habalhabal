@@ -64,6 +64,7 @@
                 </a>
             </div>
         </div>
-    {{ form_end(form) }}
+        {{ form_rest(form) }}
+    {{ form_end(form, {'render_rest': false}) }}
 </div>
 {% endblock %}

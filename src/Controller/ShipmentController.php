@@ -28,13 +28,13 @@ final class ShipmentController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $shipment = new Shipment();
+        $shipment->setStatus('pending');
         $form = $this->createForm(ShipmentType::class, $shipment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $shipment->setCreatedAt(new \DateTime());
             $shipment->setUpdatedAt(new \DateTime());
-            $shipment->setStatus('pending');
             
             $entityManager->persist($shipment);
             $entityManager->flush();
