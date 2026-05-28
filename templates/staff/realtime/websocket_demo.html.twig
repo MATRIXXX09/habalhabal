@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}WebSocket Demo{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-900 text-white p-8">
+    <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl border border-gray-700 p-6">
+        <h1 class="text-2xl font-bold mb-2">Staff WebSocket Demo</h1>
+        <p class="text-gray-300 mb-6">Connect to a lightweight WebSocket server and broadcast messages to all connected clients.</p>
+
+        <div class="mb-4">
+            <label for="ws-url" class="block text-sm text-gray-300 mb-2">WebSocket URL</label>
+            <input id="ws-url" class="w-full rounded-lg bg-gray-900 border border-gray-600 px-3 py-2" value="{{ wsUrl }}" />
+        </div>
+
+        <div class="flex gap-3 mb-4">
+            <button id="connect" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500">Connect</button>
+            <button id="disconnect" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500">Disconnect</button>
+        </div>
+
+        <div class="mb-4">
+            <label for="message" class="block text-sm text-gray-300 mb-2">Message</label>
+            <div class="flex gap-2">
+                <input id="message" class="flex-1 rounded-lg bg-gray-900 border border-gray-600 px-3 py-2" placeholder="Type a message" />
+                <button id="send" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500">Send</button>
+            </div>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-300 mb-2">Logs</p>
+            <pre id="logs" class="h-64 overflow-auto rounded-lg bg-black/60 border border-gray-700 p-3 text-sm"></pre>
+        </div>
+    </div>
+</div>
+
+<script>
+    let socket = null;
+    const logsEl = document.getElementById('logs');
+
+    function log(line) {
+        logsEl.textContent += line + '\n';
+        logsEl.scrollTop = logsEl.scrollHeight;
+    }
+
+    function connectSocket() {
+        const url = document.getElementById('ws-url').value.trim();
+        if (!url) {
+            log('[error] Missing WebSocket URL');
+            return;
+        }
+
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            log('[info] Already connected');
+            return;
+        }
+
+        socket = new WebSocket(url);
+
+        socket.onopen = () => log('[open] Connected to ' + url);
+        socket.onmessage = (event) => log('[message] ' + event.data);
+        socket.onerror = () => log('[error] WebSocket error');
+        socket.onclose = () => log('[close] Disconnected');
+    }
+
+    document.getElementById('connect').addEventListener('click', connectSocket);
+
+    document.getElementById('disconnect').addEventListener('click', () => {
+        if (socket) {
+            socket.close();
+        }
+    });
+
+    document.getElementById('send').addEventListener('click', () => {
+        const input = document.getElementById('message');
+        const text = input.value.trim();
+        if (!text) {
+            return;
+        }
+
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            log('[error] Socket not connected');
+            return;
+        }
+
+        socket.send(text);
+        input.value = '';
+    });
+</script>
+{% endblock %}

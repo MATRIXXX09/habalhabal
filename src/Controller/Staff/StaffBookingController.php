@@ -344,7 +344,8 @@ class StaffBookingController extends AbstractController
 
     private function checkOwnership(Booking $booking): void
     {
-        if ($this->isGranted('ROLE_ADMIN')) {
+        // Allow admins and staff to manage bookings
+        if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_STAFF')) {
             return;
         }
 

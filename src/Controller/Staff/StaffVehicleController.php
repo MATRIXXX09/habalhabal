@@ -24,7 +24,14 @@ class StaffVehicleController extends AbstractController
     {
         $user = $this->getUser();
         $vehicles = $repository->findBy(['createdBy' => $user]);
-        $riders = $riderRepository->findBy(['createdBy' => $user]);
+        // Show riders created by this staff user or created by admin (createdBy IS NULL)
+        $qb = $riderRepository->createQueryBuilder('r');
+        $riders = $qb
+            ->where('r.createdBy = :user OR r.createdBy IS NULL')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('staff/vehicle/index.html.twig', [
             'vehicles' => $vehicles,
@@ -38,8 +45,14 @@ class StaffVehicleController extends AbstractController
         $vehicle = new Vehicle();
         $user = $this->getUser();
         
-        // Get riders created by the current user
-        $riders = $riderRepository->findBy(['createdBy' => $user]);
+        // Get riders created by the current user or by admin
+        $qb = $riderRepository->createQueryBuilder('r');
+        $riders = $qb
+            ->where('r.createdBy = :user OR r.createdBy IS NULL')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
         
         // Get all vehicles created by the user with assigned riders to prevent duplication
         $allVehicles = $vehicleRepository->findBy(['createdBy' => $user]);
@@ -97,7 +110,13 @@ class StaffVehicleController extends AbstractController
         $this->checkOwnership($vehicle);
 
         $user = $this->getUser();
-        $riders = $riderRepository->findBy(['createdBy' => $user]);
+        $qb = $riderRepository->createQueryBuilder('r');
+        $riders = $qb
+            ->where('r.createdBy = :user OR r.createdBy IS NULL')
+            ->setParameter('user', $user)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
         
         $form = $this->createForm(VehicleType::class, $vehicle, [
             'available_riders' => $riders,
