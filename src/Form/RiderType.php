@@ -33,11 +33,11 @@ class RiderType extends AbstractType
                 'label' => 'Contact Number',
                 'attr' => ['class' => 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Contact number is required']),
-                    new \Symfony\Component\Validator\Constraints\Regex([
-                        'pattern' => '/^(09\d{9}|63\d{10})$/',
-                        'message' => 'Contact number must start with 09 or 63 and be a valid Philippine mobile number.'
-                    ]),
+                    new NotBlank(message: 'Contact number is required'),
+                    new \Symfony\Component\Validator\Constraints\Regex(
+                        pattern: '/^(09\d{9}|63\d{10})$/',
+                        message: 'Contact number must start with 09 or 63 and be a valid Philippine mobile number.'
+                    ),
                     new UniqueContactNumber(),
                 ]
             ])
@@ -61,7 +61,7 @@ class RiderType extends AbstractType
                 'label' => 'Plate Number',
                 'attr' => ['class' => 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Plate number is required']),
+                    new NotBlank(message: 'Plate number is required'),
                     new UniquePlateNumber(),
                 ]
             ]);
@@ -71,8 +71,8 @@ class RiderType extends AbstractType
                 ->add('email', EmailType::class, [
                     'mapped' => false,
                     'constraints' => [
-                        new NotBlank(['message' => 'Please enter an email']),
-                        new Email(['message' => 'Please enter a valid email']),
+                        new NotBlank(message: 'Please enter an email'),
+                        new Email(message: 'Please enter a valid email'),
                         new UniqueEmail(),
                     ],
                     'attr' => ['class' => 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'],
@@ -80,7 +80,7 @@ class RiderType extends AbstractType
                 ->add('password', PasswordType::class, [
                     'mapped' => false,
                     'constraints' => [
-                        new NotBlank(['message' => 'Please enter a password']),
+                        new NotBlank(message: 'Please enter a password'),
                     ],
                     'attr' => ['class' => 'block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'],
                 ]);

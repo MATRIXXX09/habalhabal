@@ -53,25 +53,11 @@ class UserType extends AbstractType
                 'required' => !$options['data']->getId(), // Required for new users
                 'label' => 'Password',
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                    ]),
-                    new Regex([
-                        'pattern' => '/[A-Z]/',
-                        'message' => 'Password must contain at least one uppercase letter',
-                    ]),
-                    new Regex([
-                        'pattern' => '/[a-z]/',
-                        'message' => 'Password must contain at least one lowercase letter',
-                    ]),
-                    new Regex([
-                        'pattern' => '/[0-9]/',
-                        'message' => 'Password must contain at least one number',
-                    ]),
+                    new NotBlank(message: 'Please enter a password'),
+                    new Length(min: 8, minMessage: 'Your password should be at least {{ limit }} characters'),
+                    new Regex(pattern: '/[A-Z]/', message: 'Password must contain at least one uppercase letter'),
+                    new Regex(pattern: '/[a-z]/', message: 'Password must contain at least one lowercase letter'),
+                    new Regex(pattern: '/[0-9]/', message: 'Password must contain at least one number'),
                 ],
                 'attr' => [
                     'class' => 'block w-full rounded-md bg-white/5 px-3 py-1.5 text-white',
