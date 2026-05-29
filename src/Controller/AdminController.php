@@ -15,6 +15,7 @@ use App\Repository\UserRepository;
 use App\Repository\BookingRepository;
 use App\Repository\ShipmentRepository;
 use App\Repository\ComplaintRepository;
+use App\Service\RealtimeBroadcaster;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -386,7 +387,8 @@ class AdminController extends AbstractController
     public function newUser(
         Request $request,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        RealtimeBroadcaster $realtimeBroadcaster
     ): Response {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -402,6 +404,10 @@ class AdminController extends AbstractController
             }
             $entityManager->persist($user);
             $entityManager->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'admin-user-create',
+                'userId' => $user->getId(),
+            ]);
 
             $this->addFlash('success', 'User created successfully!');
             return $this->redirectToRoute('app_admin_users');
@@ -418,7 +424,8 @@ class AdminController extends AbstractController
         Request $request,
         User $user,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        RealtimeBroadcaster $realtimeBroadcaster
     ): Response {
         // Prevent editing of own account
         if ($user === $this->getUser()) {
@@ -467,6 +474,10 @@ class AdminController extends AbstractController
                 // Persist and flush changes
                 $entityManager->persist($user);
                 $entityManager->flush();
+                $realtimeBroadcaster->broadcastDatabaseChanged([
+                    'source' => 'admin-user-edit',
+                    'userId' => $user->getId(),
+                ]);
                 
                 $this->addFlash('success', 'User updated successfully.');
                 return $this->redirectToRoute('app_admin_users');
@@ -487,7 +498,8 @@ class AdminController extends AbstractController
     public function deleteUser(
         Request $request,
         int $id,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RealtimeBroadcaster $realtimeBroadcaster
     ): Response {
         $user = $entityManager->find(User::class, $id);
         
@@ -513,6 +525,10 @@ class AdminController extends AbstractController
                 // Now delete the user
                 $entityManager->remove($user);
                 $entityManager->flush();
+                $realtimeBroadcaster->broadcastDatabaseChanged([
+                    'source' => 'admin-user-delete',
+                    'userId' => $id,
+                ]);
                 $this->addFlash('success', 'User deleted successfully.');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while deleting the user: ' . $e->getMessage());
@@ -529,7 +545,8 @@ class AdminController extends AbstractController
     public function disableUser(
         Request $request,
         int $id,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RealtimeBroadcaster $realtimeBroadcaster
     ): Response {
         $user = $entityManager->find(User::class, $id);
         
@@ -547,6 +564,10 @@ class AdminController extends AbstractController
             try {
                 $user->disable();
                 $entityManager->flush();
+                $realtimeBroadcaster->broadcastDatabaseChanged([
+                    'source' => 'admin-user-disable',
+                    'userId' => $id,
+                ]);
                 $this->addFlash('success', sprintf('Staff account %s has been disabled.', $user->getEmail()));
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while disabling the account.');
@@ -563,7 +584,8 @@ class AdminController extends AbstractController
     public function archiveUser(
         Request $request,
         int $id,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RealtimeBroadcaster $realtimeBroadcaster
     ): Response {
         $user = $entityManager->find(User::class, $id);
         
@@ -581,6 +603,10 @@ class AdminController extends AbstractController
             try {
                 $user->archive();
                 $entityManager->flush();
+                $realtimeBroadcaster->broadcastDatabaseChanged([
+                    'source' => 'admin-user-archive',
+                    'userId' => $id,
+                ]);
                 $this->addFlash('success', sprintf('Staff account %s has been archived.', $user->getEmail()));
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while archiving the account.');
@@ -597,7 +623,8 @@ class AdminController extends AbstractController
     public function reactivateUser(
         Request $request,
         int $id,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        RealtimeBroadcaster $realtimeBroadcaster
     ): Response {
         $user = $entityManager->find(User::class, $id);
         
@@ -610,6 +637,10 @@ class AdminController extends AbstractController
             try {
                 $user->reactivate();
                 $entityManager->flush();
+                $realtimeBroadcaster->broadcastDatabaseChanged([
+                    'source' => 'admin-user-reactivate',
+                    'userId' => $id,
+                ]);
                 $this->addFlash('success', sprintf('Staff account %s has been reactivated.', $user->getEmail()));
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while reactivating the account.');

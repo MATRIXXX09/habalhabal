@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\RiderType;
 use App\Repository\RiderRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\RealtimeBroadcaster;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +40,7 @@ class StaffRiderController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    public function new(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $rider = new Rider();
         $form = $this->createForm(RiderType::class, $rider);
@@ -66,6 +67,10 @@ class StaffRiderController extends AbstractController
             $em->persist($user);
             $em->persist($rider);
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-rider-new',
+                'riderId' => $rider->getId(),
+            ]);
 
             $this->addFlash('success', 'Rider created successfully!');
             return $this->redirectToRoute('staff_rider_index');
@@ -87,7 +92,7 @@ class StaffRiderController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Rider $rider, EntityManagerInterface $em): Response
+    public function edit(Request $request, Rider $rider, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->checkOwnership($rider);
 
@@ -96,6 +101,10 @@ class StaffRiderController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-rider-edit',
+                'riderId' => $rider->getId(),
+            ]);
             $this->addFlash('success', 'Rider updated successfully!');
             return $this->redirectToRoute('staff_rider_index');
         }
@@ -107,13 +116,17 @@ class StaffRiderController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Rider $rider, EntityManagerInterface $em): Response
+    public function delete(Request $request, Rider $rider, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->checkOwnership($rider);
 
         if ($this->isCsrfTokenValid('delete' . $rider->getId(), $request->request->get('_token'))) {
             $em->remove($rider);
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-rider-delete',
+                'riderId' => $rider->getId(),
+            ]);
             $this->addFlash('success', 'Rider deleted successfully!');
         }
 
@@ -121,7 +134,7 @@ class StaffRiderController extends AbstractController
     }
 
     #[Route('/{id}/toggle-status', name: 'toggle_status', methods: ['POST'])]
-    public function toggleStatus(Request $request, Rider $rider, EntityManagerInterface $em): Response
+    public function toggleStatus(Request $request, Rider $rider, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->checkOwnership($rider);
 
@@ -138,6 +151,11 @@ class StaffRiderController extends AbstractController
 
         $rider->setStatus($newStatus);
         $em->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'staff-rider-status',
+            'riderId' => $rider->getId(),
+            'status' => $newStatus,
+        ]);
 
         // Return JSON response for AJAX requests
         if ($request->isXmlHttpRequest()) {

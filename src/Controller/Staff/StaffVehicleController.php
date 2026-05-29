@@ -9,6 +9,7 @@ use App\Form\VehicleType;
 use App\Repository\VehicleRepository;
 use App\Repository\RiderRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\RealtimeBroadcaster;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,7 @@ class StaffVehicleController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, RiderRepository $riderRepository, VehicleRepository $vehicleRepository): Response
+    public function new(Request $request, EntityManagerInterface $em, RiderRepository $riderRepository, VehicleRepository $vehicleRepository, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $vehicle = new Vehicle();
         $user = $this->getUser();
@@ -82,6 +83,10 @@ class StaffVehicleController extends AbstractController
             $vehicle->setCreatedAt(new \DateTimeImmutable());
             $em->persist($vehicle);
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-vehicle-new',
+                'vehicleId' => $vehicle->getId(),
+            ]);
 
             $this->addFlash('success', 'Vehicle created successfully!');
             return $this->redirectToRoute('staff_vehicle_index');
@@ -105,7 +110,7 @@ class StaffVehicleController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Vehicle $vehicle, EntityManagerInterface $em, RiderRepository $riderRepository): Response
+    public function edit(Request $request, Vehicle $vehicle, EntityManagerInterface $em, RiderRepository $riderRepository, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->checkOwnership($vehicle);
 
@@ -125,6 +130,10 @@ class StaffVehicleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-vehicle-edit',
+                'vehicleId' => $vehicle->getId(),
+            ]);
             $this->addFlash('success', 'Vehicle updated successfully!');
             return $this->redirectToRoute('staff_vehicle_index');
         }
@@ -137,13 +146,17 @@ class StaffVehicleController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Vehicle $vehicle, EntityManagerInterface $em): Response
+    public function delete(Request $request, Vehicle $vehicle, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->checkOwnership($vehicle);
 
         if ($this->isCsrfTokenValid('delete' . $vehicle->getId(), $request->request->get('_token'))) {
             $em->remove($vehicle);
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-vehicle-delete',
+                'vehicleId' => $vehicle->getId(),
+            ]);
             $this->addFlash('success', 'Vehicle deleted successfully!');
         }
 

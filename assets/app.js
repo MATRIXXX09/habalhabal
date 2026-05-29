@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.reload();
     });
 
+    socket.on('db:changed', (payload) => {
+        const path = window.location.pathname || '';
+        if (path.startsWith('/admin') || path.startsWith('/staff')) {
+            console.log('[Socket.IO] db:changed', payload);
+            window.location.reload();
+        }
+    });
+
     socket.on('connect_error', (error) => {
         console.warn('[Socket.IO] connect_error', error && error.message ? error.message : error);
     });

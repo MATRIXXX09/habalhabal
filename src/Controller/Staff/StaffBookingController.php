@@ -8,6 +8,7 @@ use App\Form\BookingType;
 use App\Repository\BookingRepository;
 use App\Repository\RiderRepository;
 use App\Service\DriverAvailabilityService;
+use App\Service\RealtimeBroadcaster;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,7 +37,7 @@ class StaffBookingController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->assertBookingAccess();
         $booking = new Booking();
@@ -52,6 +53,10 @@ class StaffBookingController extends AbstractController
             $booking->setStatus('pending');
             $em->persist($booking);
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-booking-new',
+                'bookingId' => $booking->getId(),
+            ]);
 
             $this->addFlash('success', 'Booking created successfully!');
             return $this->redirectToRoute('staff_booking_index');
@@ -114,7 +119,7 @@ class StaffBookingController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function edit(Request $request, Booking $booking, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->assertBookingAccess();
         $this->checkOwnership($booking);
@@ -127,6 +132,10 @@ class StaffBookingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $booking->setUpdatedAt(new \DateTime());
             $em->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'staff-booking-edit',
+                'bookingId' => $booking->getId(),
+            ]);
 
             $this->addFlash('success', 'Booking updated successfully!');
             return $this->redirectToRoute('staff_booking_show', ['id' => $booking->getId()]);
@@ -141,7 +150,7 @@ class StaffBookingController extends AbstractController
     }
 
     #[Route('/{id}/status', name: 'status_update', methods: ['POST'])]
-    public function updateStatus(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function updateStatus(Request $request, Booking $booking, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->assertBookingAccess();
         $this->checkOwnership($booking);
@@ -170,6 +179,11 @@ class StaffBookingController extends AbstractController
         $booking->setStatus($status);
         $booking->setUpdatedAt(new \DateTime());
         $em->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'staff-booking-status',
+            'bookingId' => $booking->getId(),
+            'status' => $status,
+        ]);
 
         if ($request->isXmlHttpRequest()) {
             return $this->json([
@@ -186,7 +200,7 @@ class StaffBookingController extends AbstractController
     }
 
     #[Route('/{id}/assign-driver/{driverId}', name: 'assign_driver', methods: ['POST'])]
-    public function assignDriver(Request $request, Booking $booking, int $driverId, EntityManagerInterface $em): Response
+    public function assignDriver(Request $request, Booking $booking, int $driverId, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->assertBookingAccess();
         $this->checkOwnership($booking);
@@ -223,6 +237,11 @@ class StaffBookingController extends AbstractController
         $booking->setUpdatedAt(new \DateTime());
 
         $em->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'staff-booking-assign-driver',
+            'bookingId' => $booking->getId(),
+            'driverId' => $driverId,
+        ]);
 
         $this->addFlash('success', sprintf('Booking assigned to driver %s successfully!', $driver->getFirstName()));
 
@@ -230,7 +249,7 @@ class StaffBookingController extends AbstractController
     }
 
     #[Route('/{id}/cancel', name: 'cancel', methods: ['POST'])]
-    public function cancel(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function cancel(Request $request, Booking $booking, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->assertBookingAccess();
         $this->checkOwnership($booking);
@@ -248,6 +267,10 @@ class StaffBookingController extends AbstractController
         $booking->setCancellationReason($request->request->get('reason', ''));
 
         $em->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'staff-booking-cancel',
+            'bookingId' => $booking->getId(),
+        ]);
 
         $this->addFlash('success', 'Booking cancelled successfully!');
 
@@ -255,7 +278,7 @@ class StaffBookingController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function delete(Request $request, Booking $booking, EntityManagerInterface $em, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $this->assertBookingAccess();
         $this->checkOwnership($booking);
@@ -275,6 +298,10 @@ class StaffBookingController extends AbstractController
 
         $em->remove($booking);
         $em->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'staff-booking-delete',
+            'bookingId' => $booking->getId(),
+        ]);
 
         if ($request->isXmlHttpRequest()) {
             return $this->json([
