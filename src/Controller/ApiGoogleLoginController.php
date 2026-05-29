@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+class ApiGoogleLoginController extends AbstractController
+{
+    public function __construct(
+        private ClientRegistry $clientRegistry,
+        private EntityManagerInterface $entityManager,
+        private JWTTokenManagerInterface $jwtManager
+    ) {}
+
+    #[Route('/api/google-login', name: 'api_google_login', methods: ['POST'])]
+    public function googleLogin(Request $request, UrlGeneratorInterface $urlGenerator): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $code = $data['code'] ?? null;
+        $redirectUri = $data['redirect_uri'] ?? $urlGenerator->generate('connect_google_check', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        if (!$code) {
+            return $this->json(['success' => false, 'message' => 'Authorization code is required'], 400);
+        }
+
+        try {
+            $client = $this->clientRegistry->getClient('google');
+
+            if (str_starts_with($redirectUri, 'https://127.0.0.1') || str_starts_with($redirectUri, 'https://localhost')) {
+                $redirectUri = preg_replace('/^https:/', 'http:', $redirectUri);
+            }
+
+            $accessToken = $client->getOAuth2Provider()->getAccessToken('authorization_code', [
+                'code' => $code,
+                'redirect_uri' => $redirectUri,
+            ]);
+
+            $googleUser = $client->fetchUserFromToken($accessToken);
+            $email = $googleUser->getEmail();
+
+            if (!$email) {
+                return $this->json(['success' => false, 'message' => 'No email returned from Google'], 400);
+            }
+
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+
+            if (!$user) {
+                $user = new User();
+                $user->setEmail($email);
+                $user->setUsername($googleUser->getName() ?? $email);
+                $user->setRoles(['ROLE_STAFF']);
+                $user->setPassword(bin2hex(random_bytes(16)));
+                $user->setIsVerified(true);
+                $user->setStatus('active');
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+            } else {
+                $needsFlush = false;
+                if (!$user->isVerified()) {
+                    $user->setIsVerified(true);
+                    $needsFlush = true;
+                }
+                if (!in_array('ROLE_STAFF', $user->getRoles())) {
+                    $roles = $user->getRoles();
+                    $roles[] = 'ROLE_STAFF';
+                    $user->setRoles($roles);
+                    $needsFlush = true;
+                }
+                if ($user->getStatus() !== 'active') {
+                    $user->setStatus('active');
+                    $needsFlush = true;
+                }
+                if ($needsFlush) {
+                    $this->entityManager->flush();
+                }
+            }
+
+            $token = $this->jwtManager->create($user);
+
+            return $this->json([
+                'success' => true,
+                'token' => $token,
+                'user' => [
+                    'id' => $user->getId(),
+                    'email' => $user->getEmail(),
+                    'roles' => $user->getRoles(),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+}
