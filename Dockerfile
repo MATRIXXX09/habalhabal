@@ -43,6 +43,8 @@ ENV APP_ENV=prod \
 
 RUN apt-get update && apt-get install -y \
     nginx \
+    nodejs \
+    npm \
     curl \
     && docker-php-ext-install pdo pdo_mysql \
     && rm -rf /var/lib/apt/lists/*

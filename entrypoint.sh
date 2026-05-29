@@ -11,6 +11,9 @@ php bin/console lexik:jwt:generate-keypair --env=prod --skip-if-exists --no-inte
 echo "Starting WebSocket server..."
 php bin/console --env=prod app:websocket:serve --host=127.0.0.1 --port=8081 &
 
+echo "Starting Socket.IO server..."
+node /app/socket-server.js &
+
 mkdir -p /app/var/sessions
 chown -R www-data:www-data /app/var/sessions
 chmod -R 775 /app/var/sessions

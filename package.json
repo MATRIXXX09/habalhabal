@@ -28,6 +28,7 @@
     "dependencies": {
         "@tailwindcss/postcss": "^4.3.0",
         "install": "^0.13.0",
+        "socket.io": "^4.8.3",
         "tw-elements": "^1.0.0"
     }
 }
