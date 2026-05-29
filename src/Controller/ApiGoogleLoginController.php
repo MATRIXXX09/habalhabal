@@ -22,6 +22,22 @@ class ApiGoogleLoginController extends AbstractController
         private HttpClientInterface $httpClient
     ) {}
 
+    private function getAllowedGoogleClientIds(): array
+    {
+        $configured = (string) ($_ENV['GOOGLE_CLIENT_IDS'] ?? $_SERVER['GOOGLE_CLIENT_IDS'] ?? '');
+
+        $ids = array_filter(array_map('trim', explode(',', $configured)));
+
+        foreach (['GOOGLE_CLIENT_ID', 'GOOGLE_WEB_CLIENT_ID', 'GOOGLE_ANDROID_CLIENT_ID', 'GOOGLE_IOS_CLIENT_ID'] as $key) {
+            $value = (string) ($_ENV[$key] ?? $_SERVER[$key] ?? '');
+            if ($value !== '') {
+                $ids[] = $value;
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
     #[Route('/api/google-login', name: 'api_google_login', methods: ['POST'])]
     public function googleLogin(Request $request, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
@@ -44,11 +60,23 @@ class ApiGoogleLoginController extends AbstractController
                     'query' => ['id_token' => $idToken],
                 ])->toArray(false);
 
-                $expectedAudience = (string) ($_ENV['GOOGLE_CLIENT_ID'] ?? $_SERVER['GOOGLE_CLIENT_ID'] ?? '');
                 $tokenAudience = (string) ($tokenInfo['aud'] ?? '');
+                $tokenAuthorizedParty = (string) ($tokenInfo['azp'] ?? '');
+                $allowedClientIds = $this->getAllowedGoogleClientIds();
 
-                if ($tokenAudience === '' || ($expectedAudience !== '' && $tokenAudience !== $expectedAudience)) {
+                if ($tokenAudience === '') {
                     return $this->json(['success' => false, 'message' => 'Invalid Google token audience'], 400);
+                }
+
+                $audienceAccepted = empty($allowedClientIds) || in_array($tokenAudience, $allowedClientIds, true) || ($tokenAuthorizedParty !== '' && in_array($tokenAuthorizedParty, $allowedClientIds, true));
+
+                if (!$audienceAccepted) {
+                    return $this->json([
+                        'success' => false,
+                        'message' => 'Invalid Google token audience',
+                        'aud' => $tokenAudience,
+                        'azp' => $tokenAuthorizedParty,
+                    ], 400);
                 }
 
                 if (($tokenInfo['email_verified'] ?? 'false') !== 'true') {
