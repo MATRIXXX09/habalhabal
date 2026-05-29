@@ -7,7 +7,7 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session:
         enabled: true
-        handler_id: '%env(resolve:DATABASE_URL)%'
+        handler_id: null
         cookie_secure: auto
         cookie_samesite: lax
         save_path: '%kernel.project_dir%/var/sessions'

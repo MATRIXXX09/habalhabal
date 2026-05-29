@@ -1,6 +1,6 @@
-# Disable CSRF protection globally for forms and logins/logouts
+# Disable form CSRF protection but keep the CSRF token manager available for manual tokens and login handling.
 framework:
     form:
         csrf_protection: false
 
-    csrf_protection: false
+    csrf_protection: true
