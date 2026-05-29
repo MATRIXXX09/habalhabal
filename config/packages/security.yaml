@@ -39,6 +39,7 @@ security:
         - { path: ^/dashboard, roles: [ROLE_ADMIN, ROLE_STAFF] }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/google-login, roles: PUBLIC_ACCESS }
         # - { path: ^/api/(shipment|shipments|list-shipment)$, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/verify-email, roles: PUBLIC_ACCESS }
