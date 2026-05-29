@@ -4,6 +4,10 @@ set -e
 echo "Migrating..."
 php bin/console doctrine:migrations:migrate --env=prod --no-interaction
 
+echo "Ensuring JWT keypair exists..."
+mkdir -p /app/config/jwt
+php bin/console lexik:jwt:generate-keypair --env=prod --skip-if-exists --no-interaction
+
 mkdir -p /app/var/sessions
 chown -R www-data:www-data /app/var/sessions
 chmod -R 775 /app/var/sessions
