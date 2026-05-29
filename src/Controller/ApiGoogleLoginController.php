@@ -9,6 +9,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -17,7 +18,8 @@ class ApiGoogleLoginController extends AbstractController
     public function __construct(
         private ClientRegistry $clientRegistry,
         private EntityManagerInterface $entityManager,
-        private JWTTokenManagerInterface $jwtManager
+        private JWTTokenManagerInterface $jwtManager,
+        private HttpClientInterface $httpClient
     ) {}
 
     #[Route('/api/google-login', name: 'api_google_login', methods: ['POST'])]
@@ -25,26 +27,50 @@ class ApiGoogleLoginController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $code = $data['code'] ?? null;
+        $idToken = $data['idToken'] ?? $data['id_token'] ?? null;
         $redirectUri = $data['redirect_uri'] ?? $urlGenerator->generate('connect_google_check', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        if (!$code) {
-            return $this->json(['success' => false, 'message' => 'Authorization code is required'], 400);
+        if (!$code && !$idToken) {
+            return $this->json(['success' => false, 'message' => 'Either authorization code or idToken is required'], 400);
         }
 
         try {
             $client = $this->clientRegistry->getClient('google');
+            $email = null;
+            $displayName = null;
 
-            if (str_starts_with($redirectUri, 'https://127.0.0.1') || str_starts_with($redirectUri, 'https://localhost')) {
-                $redirectUri = preg_replace('/^https:/', 'http:', $redirectUri);
+            if ($idToken) {
+                $tokenInfo = $this->httpClient->request('GET', 'https://oauth2.googleapis.com/tokeninfo', [
+                    'query' => ['id_token' => $idToken],
+                ])->toArray(false);
+
+                $expectedAudience = (string) ($_ENV['GOOGLE_CLIENT_ID'] ?? $_SERVER['GOOGLE_CLIENT_ID'] ?? '');
+                $tokenAudience = (string) ($tokenInfo['aud'] ?? '');
+
+                if ($tokenAudience === '' || ($expectedAudience !== '' && $tokenAudience !== $expectedAudience)) {
+                    return $this->json(['success' => false, 'message' => 'Invalid Google token audience'], 400);
+                }
+
+                if (($tokenInfo['email_verified'] ?? 'false') !== 'true') {
+                    return $this->json(['success' => false, 'message' => 'Google email is not verified'], 400);
+                }
+
+                $email = $tokenInfo['email'] ?? null;
+                $displayName = $tokenInfo['name'] ?? null;
+            } else {
+                if (str_starts_with($redirectUri, 'https://127.0.0.1') || str_starts_with($redirectUri, 'https://localhost')) {
+                    $redirectUri = preg_replace('/^https:/', 'http:', $redirectUri);
+                }
+
+                $accessToken = $client->getOAuth2Provider()->getAccessToken('authorization_code', [
+                    'code' => $code,
+                    'redirect_uri' => $redirectUri,
+                ]);
+
+                $googleUser = $client->fetchUserFromToken($accessToken);
+                $email = $googleUser->getEmail();
+                $displayName = $googleUser->getName();
             }
-
-            $accessToken = $client->getOAuth2Provider()->getAccessToken('authorization_code', [
-                'code' => $code,
-                'redirect_uri' => $redirectUri,
-            ]);
-
-            $googleUser = $client->fetchUserFromToken($accessToken);
-            $email = $googleUser->getEmail();
 
             if (!$email) {
                 return $this->json(['success' => false, 'message' => 'No email returned from Google'], 400);
@@ -55,7 +81,7 @@ class ApiGoogleLoginController extends AbstractController
             if (!$user) {
                 $user = new User();
                 $user->setEmail($email);
-                $user->setUsername($googleUser->getName() ?? $email);
+                $user->setUsername($displayName ?? $email);
                 $user->setRoles(['ROLE_STAFF']);
                 $user->setPassword(bin2hex(random_bytes(16)));
                 $user->setIsVerified(true);
