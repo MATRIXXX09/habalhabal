@@ -53,14 +53,17 @@ class ApiWalletController extends AbstractController
         return $this->json([
             'success' => true,
             'message' => 'Top up successful',
-            'balance' => $user->getWalletBalance(),
+            'balance' => $this->getWalletBalance($user, $entityManager),
         ]);
     }
 
     #[Route('/api/wallet/balance', name: 'api_wallet_balance', methods: ['GET'])]
     #[Route('/api/wallet', name: 'api_wallet_balance_alias', methods: ['GET'])]
     #[Route('/wallet', name: 'api_wallet_balance_web_alias', methods: ['GET'])]
-    public function balance(#[CurrentUser] ?User $user): JsonResponse
+    public function balance(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] ?User $user,
+    ): JsonResponse
     {
         if (!$user) {
             return $this->json(['success' => false, 'message' => 'Authentication required'], Response::HTTP_UNAUTHORIZED);
@@ -68,7 +71,24 @@ class ApiWalletController extends AbstractController
 
         return $this->json([
             'success' => true,
-            'balance' => $user->getWalletBalance(),
+            'balance' => $this->getWalletBalance($user, $entityManager),
         ]);
+    }
+
+    private function getWalletBalance(User $user, EntityManagerInterface $entityManager): float
+    {
+        $balance = (float) $user->getWalletBalance();
+
+        try {
+            $connection = $entityManager->getConnection();
+            $topUpValue = $connection->fetchOne('SELECT COALESCE(top_up, 0.00) FROM `user` WHERE id = ?', [$user->getId()]);
+            if ($topUpValue !== false) {
+                $balance += (float) $topUpValue;
+            }
+        } catch (\Throwable $exception) {
+            // Ignore if the legacy top_up column does not exist or if DB access fails.
+        }
+
+        return round($balance, 2);
     }
 }
