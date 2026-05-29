@@ -16,6 +16,8 @@ class ApiWalletController extends AbstractController
 {
     #[Route('/api/wallet/top-up', name: 'api_wallet_top_up', methods: ['POST'])]
     #[Route('/api/wallet/topup', name: 'api_wallet_top_up_alias', methods: ['POST'])]
+    #[Route('/wallet/top-up', name: 'api_wallet_top_up_web_alias', methods: ['POST'])]
+    #[Route('/wallet/topup', name: 'api_wallet_top_up_web_alias_2', methods: ['POST'])]
     #[Route('/api/top-up', name: 'api_top_up_alias', methods: ['POST'])]
     #[Route('/api/topup', name: 'api_topup_alias', methods: ['POST'])]
     #[Route('/api/add-cash', name: 'api_add_cash_alias', methods: ['POST'])]
@@ -56,6 +58,8 @@ class ApiWalletController extends AbstractController
     }
 
     #[Route('/api/wallet/balance', name: 'api_wallet_balance', methods: ['GET'])]
+    #[Route('/api/wallet', name: 'api_wallet_balance_alias', methods: ['GET'])]
+    #[Route('/wallet', name: 'api_wallet_balance_web_alias', methods: ['GET'])]
     public function balance(#[CurrentUser] ?User $user): JsonResponse
     {
         if (!$user) {
