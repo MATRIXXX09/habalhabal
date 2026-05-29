@@ -38,6 +38,30 @@ class ApiGoogleLoginController extends AbstractController
         return array_values(array_unique($ids));
     }
 
+    private function broadcastUserCreated(User $user): void
+    {
+        try {
+            $this->httpClient->request('POST', 'http://127.0.0.1:3001/emit', [
+                'headers' => [
+                    'X-Broadcast-Secret' => (string) ($_ENV['APP_SECRET'] ?? $_SERVER['APP_SECRET'] ?? ''),
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'event' => 'admin:user:created',
+                    'payload' => [
+                        'id' => $user->getId(),
+                        'email' => $user->getEmail(),
+                        'username' => $user->getUsername(),
+                        'roles' => $user->getRoles(),
+                        'status' => $user->getStatus(),
+                    ],
+                ],
+            ])->getContent(false);
+        } catch (\Throwable $e) {
+            // Don't block login if realtime broadcast fails.
+        }
+    }
+
     #[Route('/api/google-login', name: 'api_google_login', methods: ['POST'])]
     public function googleLogin(Request $request, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
@@ -106,6 +130,8 @@ class ApiGoogleLoginController extends AbstractController
 
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
+            $isNewUser = false;
+
             if (!$user) {
                 $user = new User();
                 $user->setEmail($email);
@@ -116,6 +142,7 @@ class ApiGoogleLoginController extends AbstractController
                 $user->setStatus('active');
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
+                $isNewUser = true;
             } else {
                 $needsFlush = false;
                 if (!$user->isVerified()) {
@@ -135,6 +162,10 @@ class ApiGoogleLoginController extends AbstractController
                 if ($needsFlush) {
                     $this->entityManager->flush();
                 }
+            }
+
+            if ($isNewUser) {
+                $this->broadcastUserCreated($user);
             }
 
             $token = $this->jwtManager->create($user);

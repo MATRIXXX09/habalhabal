@@ -1,8 +1,52 @@
+const http = require("http");
 const { Server } = require("socket.io");
 
 const PORT = Number(process.env.SOCKET_IO_PORT || 3001);
+const BROADCAST_SECRET = String(process.env.APP_SECRET || "");
 
-const io = new Server({
+const server = http.createServer((req, res) => {
+  if (req.method === "POST" && req.url === "/emit") {
+    const headerSecret = String(req.headers["x-broadcast-secret"] || "");
+    if (!BROADCAST_SECRET || headerSecret !== BROADCAST_SECRET) {
+      res.writeHead(401, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+      return;
+    }
+
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk;
+    });
+
+    req.on("end", () => {
+      try {
+        const parsed = JSON.parse(body || "{}");
+        const event = String(parsed.event || "");
+        const payload = parsed.payload ?? null;
+
+        if (!event) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: false, message: "Missing event" }));
+          return;
+        }
+
+        io.emit(event, payload);
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: true }));
+      } catch (error) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: false, message: error.message }));
+      }
+    });
+
+    return;
+  }
+
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ success: false, message: "Not found" }));
+});
+
+const io = new Server(server, {
   path: "/socket.io",
   cors: {
     origin: "*",
@@ -31,5 +75,5 @@ io.on("connection", (socket) => {
   });
 });
 
-io.listen(PORT);
+server.listen(PORT);
 console.log(`[socket.io] listening on :${PORT} path=/socket.io`);
