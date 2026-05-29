@@ -69,6 +69,7 @@ class ApiGoogleLoginController extends AbstractController
         $code = $data['code'] ?? null;
         $idToken = $data['idToken'] ?? $data['id_token'] ?? null;
         $redirectUri = $data['redirect_uri'] ?? $urlGenerator->generate('connect_google_check', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $isMobileLogin = (bool) $idToken;
 
         if (!$code && !$idToken) {
             return $this->json(['success' => false, 'message' => 'Either authorization code or idToken is required'], 400);
@@ -131,12 +132,13 @@ class ApiGoogleLoginController extends AbstractController
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
             $isNewUser = false;
+            $defaultRole = $isMobileLogin ? 'ROLE_USER' : 'ROLE_STAFF';
 
             if (!$user) {
                 $user = new User();
                 $user->setEmail($email);
                 $user->setUsername($displayName ?? $email);
-                $user->setRoles(['ROLE_STAFF']);
+                $user->setRoles([$defaultRole]);
                 $user->setPassword(bin2hex(random_bytes(16)));
                 $user->setIsVerified(true);
                 $user->setStatus('active');
@@ -149,9 +151,9 @@ class ApiGoogleLoginController extends AbstractController
                     $user->setIsVerified(true);
                     $needsFlush = true;
                 }
-                if (!in_array('ROLE_STAFF', $user->getRoles())) {
+                if (!in_array($defaultRole, $user->getRoles(), true)) {
                     $roles = $user->getRoles();
-                    $roles[] = 'ROLE_STAFF';
+                    $roles[] = $defaultRole;
                     $user->setRoles($roles);
                     $needsFlush = true;
                 }
@@ -177,6 +179,7 @@ class ApiGoogleLoginController extends AbstractController
                     'id' => $user->getId(),
                     'email' => $user->getEmail(),
                     'roles' => $user->getRoles(),
+                    'loginRole' => $defaultRole,
                 ],
             ]);
         } catch (\Exception $e) {

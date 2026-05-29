@@ -55,6 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $verificationToken = null;
 
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, options: ['default' => '0.00'])]
+    private string $walletBalance = '0.00';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -245,6 +248,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerificationToken(?string $verificationToken): static
     {
         $this->verificationToken = $verificationToken;
+        return $this;
+    }
+
+    public function getWalletBalance(): string
+    {
+        return $this->walletBalance;
+    }
+
+    public function setWalletBalance(string|float $walletBalance): static
+    {
+        $this->walletBalance = number_format((float) $walletBalance, 2, '.', '');
+        return $this;
+    }
+
+    public function addWalletBalance(string|float $amount): static
+    {
+        $current = (float) $this->walletBalance;
+        $this->walletBalance = number_format($current + (float) $amount, 2, '.', '');
         return $this;
     }
 }
