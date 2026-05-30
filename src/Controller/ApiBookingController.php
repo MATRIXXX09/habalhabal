@@ -33,9 +33,22 @@ class ApiBookingController extends AbstractController
             return $this->json(['success' => false, 'message' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
 
-        $required = ['bookingType', 'pickupAddress', 'deliveryAddress', 'customerName', 'customerPhone'];
-        foreach ($required as $field) {
-            if (empty($data[$field])) {
+        $bookingType = $this->getValue($data, ['bookingType', 'booking_type']);
+        $pickupAddress = $this->getValue($data, ['pickupAddress', 'pickup_address']);
+        $deliveryAddress = $this->getValue($data, ['deliveryAddress', 'delivery_address']);
+        $customerName = $this->getValue($data, ['customerName', 'customer_name']) ?: $user->getUsername() ?: $user->getEmail();
+        $customerPhone = $this->getValue($data, ['customerPhone', 'customer_phone', 'phoneNumber', 'phone_number']) ?: $user->getUsername();
+
+        $required = [
+            'bookingType' => $bookingType,
+            'pickupAddress' => $pickupAddress,
+            'deliveryAddress' => $deliveryAddress,
+            'customerName' => $customerName,
+            'customerPhone' => $customerPhone,
+        ];
+
+        foreach ($required as $field => $value) {
+            if (empty($value)) {
                 return $this->json(['success' => false, 'message' => "Missing required field: {$field}"], Response::HTTP_BAD_REQUEST);
             }
         }
@@ -44,36 +57,39 @@ class ApiBookingController extends AbstractController
         $booking->setCustomer($user);
         $booking->setCreatedBy($user);
         $booking->setStatus('pending');
-        $booking->setBookingType((string) $data['bookingType']);
-        $booking->setPickupAddress((string) $data['pickupAddress']);
-        $booking->setDeliveryAddress((string) $data['deliveryAddress']);
-        $booking->setCustomerName((string) $data['customerName']);
-        $booking->setCustomerPhone((string) $data['customerPhone']);
-        $booking->setParcelDescription(isset($data['parcelDescription']) ? (string) $data['parcelDescription'] : null);
-        $booking->setParcelType(isset($data['parcelType']) ? (string) $data['parcelType'] : null);
-        $booking->setParcelWeight(isset($data['parcelWeight']) && $data['parcelWeight'] !== '' ? (float) $data['parcelWeight'] : null);
-        $booking->setPriorityLevel(isset($data['priorityLevel']) ? (string) $data['priorityLevel'] : null);
-        $booking->setSpecialInstructions(isset($data['specialInstructions']) ? (string) $data['specialInstructions'] : null);
-        $booking->setEstimatedDistance(isset($data['estimatedDistance']) && $data['estimatedDistance'] !== '' ? (float) $data['estimatedDistance'] : null);
-        $booking->setEstimatedDuration(isset($data['estimatedDuration']) && $data['estimatedDuration'] !== '' ? (float) $data['estimatedDuration'] : null);
-        $booking->setEstimatedFare(isset($data['estimatedFare']) && $data['estimatedFare'] !== '' ? (float) $data['estimatedFare'] : null);
+        $booking->setBookingType((string) $bookingType);
+        $booking->setPickupAddress((string) $pickupAddress);
+        $booking->setDeliveryAddress((string) $deliveryAddress);
+        $booking->setCustomerName((string) $customerName);
+        $booking->setCustomerPhone((string) $customerPhone);
+        $booking->setParcelDescription($this->getValue($data, ['parcelDescription', 'parcel_description']));
+        $booking->setParcelType($this->getValue($data, ['parcelType', 'parcel_type']));
+        $booking->setParcelWeight($this->getValue($data, ['parcelWeight', 'parcel_weight']) !== null && $this->getValue($data, ['parcelWeight', 'parcel_weight']) !== '' ? (float) $this->getValue($data, ['parcelWeight', 'parcel_weight']) : null);
+        $booking->setPriorityLevel($this->getValue($data, ['priorityLevel', 'priority_level']));
+        $booking->setSpecialInstructions($this->getValue($data, ['specialInstructions', 'special_instructions']));
+        $booking->setEstimatedDistance($this->getValue($data, ['estimatedDistance', 'estimated_distance']) !== null && $this->getValue($data, ['estimatedDistance', 'estimated_distance']) !== '' ? (float) $this->getValue($data, ['estimatedDistance', 'estimated_distance']) : null);
+        $booking->setEstimatedDuration($this->getValue($data, ['estimatedDuration', 'estimated_duration']) !== null && $this->getValue($data, ['estimatedDuration', 'estimated_duration']) !== '' ? (float) $this->getValue($data, ['estimatedDuration', 'estimated_duration']) : null);
+        $booking->setEstimatedFare($this->getValue($data, ['estimatedFare', 'estimated_fare']) !== null && $this->getValue($data, ['estimatedFare', 'estimated_fare']) !== '' ? (float) $this->getValue($data, ['estimatedFare', 'estimated_fare']) : null);
 
         try {
-            if (!empty($data['requestedPickupTime'])) {
-                $booking->setRequestedPickupTime(new \DateTime((string) $data['requestedPickupTime']));
-            } else {
-                $booking->setRequestedPickupTime(new \DateTime());
-            }
+            $requestedPickupTime = $this->parseDateTime($this->getValue($data, ['requestedPickupTime', 'requested_pickup_time']));
+            $requestedDeliveryTime = $this->parseDateTime($this->getValue($data, ['requestedDeliveryTime', 'requested_delivery_time']));
 
-            if (!empty($data['requestedDeliveryTime'])) {
-                $booking->setRequestedDeliveryTime(new \DateTime((string) $data['requestedDeliveryTime']));
+            $booking->setRequestedPickupTime($requestedPickupTime ?? new \DateTime());
+            if ($requestedDeliveryTime) {
+                $booking->setRequestedDeliveryTime($requestedDeliveryTime);
             }
         } catch (\Throwable $e) {
             return $this->json(['success' => false, 'message' => 'Invalid pickup or delivery time'], Response::HTTP_BAD_REQUEST);
         }
 
-        $entityManager->persist($booking);
-        $entityManager->flush();
+        try {
+            $entityManager->persist($booking);
+            $entityManager->flush();
+        } catch (\Throwable $e) {
+            error_log('ApiBookingController create exception: ' . $e->getMessage());
+            return $this->json(['success' => false, 'message' => 'Unable to create booking'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         $realtimeBroadcaster->broadcastDatabaseChanged([
             'source' => 'api-booking-create',
@@ -94,5 +110,25 @@ class ApiBookingController extends AbstractController
                 'createdAt' => $booking->getCreatedAt()?->format('Y-m-d H:i:s'),
             ],
         ], Response::HTTP_CREATED);
+    }
+
+    private function getValue(array $data, array $keys, mixed $default = null): mixed
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $data) && $data[$key] !== null) {
+                return $data[$key];
+            }
+        }
+
+        return $default;
+    }
+
+    private function parseDateTime(mixed $value): ?\DateTimeInterface
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return new \DateTime((string) $value);
     }
 }
