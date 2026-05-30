@@ -70,7 +70,7 @@ class StaffBookingController extends AbstractController
                     throw new \Exception('No authenticated user found');
                 }
 
-                $booking->setCustomer($currentUser);
+                // Staff-created bookings should track the creator but not assign the staff user as the customer.
                 $booking->setCreatedBy($currentUser);
                 $booking->setStatus('pending');
 
