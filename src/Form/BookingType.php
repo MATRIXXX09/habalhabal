@@ -89,6 +89,8 @@ class BookingType extends AbstractType
             ->add('requestedPickupTime', DateTimeType::class, [
                 'label' => 'Requested Pickup Time',
                 'widget' => 'single_text',
+                'html5' => true,
+                'format' => "yyyy-MM-dd'T'HH:mm",
                 'required' => true,
                 'attr' => ['class' => 'form-input'],
                 'constraints' => [
@@ -98,6 +100,8 @@ class BookingType extends AbstractType
             ->add('requestedDeliveryTime', DateTimeType::class, [
                 'label' => 'Requested Delivery Time',
                 'widget' => 'single_text',
+                'html5' => true,
+                'format' => "yyyy-MM-dd'T'HH:mm",
                 'required' => false,
                 'attr' => ['class' => 'form-input'],
             ])

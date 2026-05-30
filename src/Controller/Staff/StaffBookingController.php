@@ -46,20 +46,74 @@ class StaffBookingController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Save the booking directly to database
-            $booking->setCustomer($this->getUser());
-            $booking->setCreatedBy($this->getUser());
-            $booking->setStatus('pending');
-            $em->persist($booking);
-            $em->flush();
-            $realtimeBroadcaster->broadcastDatabaseChanged([
-                'source' => 'staff-booking-new',
-                'bookingId' => $booking->getId(),
-            ]);
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                // Log form errors for debugging
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $errors[] = $error->getMessage();
+                }
+                error_log('StaffBookingController form validation failed: ' . implode(', ', $errors));
+                
+                // Flash message for user
+                $this->addFlash('error', 'Form validation failed. Please check all required fields.');
+                
+                return $this->render('staff/booking/new.html.twig', [
+                    'form' => $form,
+                ]);
+            }
 
-            $this->addFlash('success', 'Booking created successfully!');
-            return $this->redirectToRoute('staff_booking_index');
+            try {
+                // Ensure required fields are set
+                $currentUser = $this->getUser();
+                if (!$currentUser) {
+                    throw new \Exception('No authenticated user found');
+                }
+
+                $booking->setCustomer($currentUser);
+                $booking->setCreatedBy($currentUser);
+                $booking->setStatus('pending');
+
+                // Verify all required fields
+                if (!$booking->getBookingType()) {
+                    throw new \Exception('Booking type is required');
+                }
+                if (!$booking->getPickupAddress()) {
+                    throw new \Exception('Pickup address is required');
+                }
+                if (!$booking->getDeliveryAddress()) {
+                    throw new \Exception('Delivery address is required');
+                }
+                if (!$booking->getCustomerName()) {
+                    throw new \Exception('Customer name is required');
+                }
+                if (!$booking->getCustomerPhone()) {
+                    throw new \Exception('Customer phone is required');
+                }
+                if (!$booking->getRequestedPickupTime()) {
+                    throw new \Exception('Requested pickup time is required');
+                }
+
+                $em->persist($booking);
+                $em->flush();
+
+                error_log('StaffBookingController new: Booking created successfully, ID=' . $booking->getId());
+
+                $realtimeBroadcaster->broadcastDatabaseChanged([
+                    'source' => 'staff-booking-new',
+                    'bookingId' => $booking->getId(),
+                ]);
+
+                $this->addFlash('success', 'Booking created successfully!');
+                return $this->redirectToRoute('staff_booking_index');
+            } catch (\Exception $e) {
+                error_log('StaffBookingController new exception: ' . $e->getMessage() . ' | ' . $e->getTraceAsString());
+                $this->addFlash('error', 'Error creating booking: ' . $e->getMessage());
+                
+                return $this->render('staff/booking/new.html.twig', [
+                    'form' => $form,
+                ]);
+            }
         }
 
         return $this->render('staff/booking/new.html.twig', [
