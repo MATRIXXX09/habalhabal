@@ -60,8 +60,8 @@ class ApiBookingController extends AbstractController
         $bookingType = $this->getValue($data, ['bookingType', 'booking_type']);
         $pickupAddress = $this->getValue($data, ['pickupAddress', 'pickup_address']);
         $deliveryAddress = $this->getValue($data, ['deliveryAddress', 'delivery_address']);
-        $customerName = $this->getValue($data, ['customerName', 'customer_name']) ?: $user->getUsername() ?: $user->getEmail();
-        $customerPhone = $this->getValue($data, ['customerPhone', 'customer_phone', 'phoneNumber', 'phone_number']) ?: $user->getUsername();
+        $customerName = $this->getValue($data, ['customerName', 'customer_name']) ?: $user->getEmail() ?: $user->getUsername();
+        $customerPhone = $this->getValue($data, ['customerPhone', 'customer_phone', 'phoneNumber', 'phone_number']) ?: $user->getEmail();
 
         if ($isHabal) {
             $customerName = $customerName ?: 'Habal-Habal Rider';
