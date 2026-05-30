@@ -11,7 +11,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class BookingType extends AbstractType
 {
@@ -26,40 +28,37 @@ class BookingType extends AbstractType
                 'label' => 'Booking Type',
                 'attr' => ['class' => 'form-select'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Please select a booking type']),
+                    new NotBlank(message: 'Please select a booking type'),
                 ],
             ])
             ->add('customerName', TextType::class, [
                 'label' => 'Customer Name',
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Enter customer name'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Customer name is required']),
-                    new Assert\Length(['min' => 2, 'minMessage' => 'Name must be at least 2 characters']),
+                    new NotBlank(message: 'Customer name is required'),
+                    new Length(min: 2, minMessage: 'Name must be at least 2 characters'),
                 ],
             ])
             ->add('customerPhone', TextType::class, [
                 'label' => 'Customer Phone',
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Enter phone number'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Phone number is required']),
-                    new Assert\Regex([
-                        'pattern' => '/^[\d\s\-\+\(\)]+$/',
-                        'message' => 'Invalid phone number format',
-                    ]),
+                    new NotBlank(message: 'Phone number is required'),
+                    new Regex(pattern: '/^[\d\s\-\+\(\)]+$/', message: 'Invalid phone number format'),
                 ],
             ])
             ->add('pickupAddress', TextType::class, [
                 'label' => 'Pickup Address',
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Enter pickup location'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Pickup address is required']),
+                    new NotBlank(message: 'Pickup address is required'),
                 ],
             ])
             ->add('deliveryAddress', TextType::class, [
                 'label' => 'Delivery Address',
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Enter delivery location'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Delivery address is required']),
+                    new NotBlank(message: 'Delivery address is required'),
                 ],
             ])
             ->add('parcelType', ChoiceType::class, [
@@ -72,7 +71,7 @@ class BookingType extends AbstractType
                 'label' => 'Parcel Type',
                 'attr' => ['class' => 'form-select'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Please select a parcel type']),
+                    new NotBlank(message: 'Please select a parcel type'),
                 ],
             ])
             ->add('parcelWeight', NumberType::class, [
@@ -91,9 +90,9 @@ class BookingType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'required' => true,
-                'attr' => ['class' => 'form-input'],
+                'attr' => ['class' => 'form-input', 'type' => 'datetime-local'],
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Pickup time is required']),
+                    new NotBlank(message: 'Pickup time is required'),
                 ],
             ])
             ->add('requestedDeliveryTime', DateTimeType::class, [
@@ -101,7 +100,7 @@ class BookingType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'required' => false,
-                'attr' => ['class' => 'form-input'],
+                'attr' => ['class' => 'form-input', 'type' => 'datetime-local'],
             ])
             ->add('priorityLevel', ChoiceType::class, [
                 'choices' => [
@@ -119,7 +118,6 @@ class BookingType extends AbstractType
                 'attr' => ['class' => 'form-textarea', 'rows' => 3, 'placeholder' => 'Any special handling or delivery instructions'],
             ])
         ;
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
