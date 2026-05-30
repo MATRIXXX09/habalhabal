@@ -24,9 +24,17 @@ class ApiBookingController extends AbstractController
         RealtimeBroadcaster $realtimeBroadcaster,
         #[CurrentUser] ?User $user,
     ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) {
+            return $this->json(['success' => false, 'message' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$user) {
             return $this->json(['success' => false, 'message' => 'Authentication required'], Response::HTTP_UNAUTHORIZED);
         }
+
+        $bookingType = $this->getValue($data, ['bookingType', 'booking_type']);
+        $isHabal = is_string($bookingType) && strtolower($bookingType) === 'habal-habal';
 
         $customer = null;
         if ($user->getId() !== null) {
@@ -37,12 +45,14 @@ class ApiBookingController extends AbstractController
             $customer = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
         }
 
-        if (!$customer) {
+        if (!$customer && !$isHabal) {
             error_log('ApiBookingController create exception: authenticated user not found in DB, id=' . ($user->getId() ?? 'null') . ', email=' . ($user->getEmail() ?? 'null'));
             return $this->json(['success' => false, 'message' => 'Authenticated user not found'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $data = json_decode($request->getContent(), true);
+        if (!$customer) {
+            error_log('ApiBookingController create notice: creating booking without persisted customer for habal-habal booking');
+        }
         if (!is_array($data)) {
             return $this->json(['success' => false, 'message' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
@@ -53,13 +63,21 @@ class ApiBookingController extends AbstractController
         $customerName = $this->getValue($data, ['customerName', 'customer_name']) ?: $user->getUsername() ?: $user->getEmail();
         $customerPhone = $this->getValue($data, ['customerPhone', 'customer_phone', 'phoneNumber', 'phone_number']) ?: $user->getUsername();
 
+        if ($isHabal) {
+            $customerName = $customerName ?: 'Habal-Habal Rider';
+            $customerPhone = $customerPhone ?: 'N/A';
+        }
+
         $required = [
             'bookingType' => $bookingType,
             'pickupAddress' => $pickupAddress,
             'deliveryAddress' => $deliveryAddress,
-            'customerName' => $customerName,
-            'customerPhone' => $customerPhone,
         ];
+
+        if (!$isHabal) {
+            $required['customerName'] = $customerName;
+            $required['customerPhone'] = $customerPhone;
+        }
 
         foreach ($required as $field => $value) {
             if (empty($value)) {
@@ -68,8 +86,10 @@ class ApiBookingController extends AbstractController
         }
 
         $booking = new Booking();
-        $booking->setCustomer($customer);
-        $booking->setCreatedBy($customer);
+        if ($customer) {
+            $booking->setCustomer($customer);
+            $booking->setCreatedBy($customer);
+        }
         $booking->setStatus('pending');
         $booking->setBookingType((string) $bookingType);
         $booking->setPickupAddress((string) $pickupAddress);
