@@ -159,9 +159,19 @@
                 drawCallback: function() {
                     $('.table-row').each(function(index) {
                         $(this).css('animation-delay', (index * 0.05) + 's');
-                    });
-                }
-            });
+             });
+         }
+ 
+         // Listen for DataTable reload event from Socket.IO
+         $(document).on('datatable:reload', function() {
+             if ($.fn.DataTable) {
+                 const table = $('#archivesTable').DataTable();
+                 if (table) {
+                     table.ajax.reload();
+                 }
+             }
+         });
+     });
         }
     });
     </script>

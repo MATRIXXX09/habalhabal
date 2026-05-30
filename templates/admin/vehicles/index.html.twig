@@ -122,11 +122,21 @@
                     },
                     dom: '<"top flex items-center justify-between mb-4"lf>rt<"bottom flex items-center justify-between mt-4"ip>'
                 });
-            } else {
-                console.error('DataTables not loaded!');
-            }
-        });
-    </script>
+             } else {
+                 console.error('DataTables not loaded!');
+             }
+         });
+ 
+         // Listen for DataTable reload event from Socket.IO
+         $(document).on('datatable:reload', function() {
+             if ($.fn.DataTable) {
+                 const table = $('#usersTable').DataTable();
+                 if (table) {
+                     table.ajax.reload();
+                 }
+             }
+         });
+     </script>
     </main>
 </div>
 

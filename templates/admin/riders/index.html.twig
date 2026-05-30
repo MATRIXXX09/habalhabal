@@ -370,27 +370,36 @@
         }
     });
 
-    // Add CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes slideOut {
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-    `;
-    document.head.appendChild(style);
-</script>
-{% endblock %}
+         // Add CSS animations
+         const style = document.createElement('style');
+         style.textContent = `
+         @keyframes spin {
+             from { transform: rotate(0deg); }
+             to { transform: rotate(360deg); }
+         }
+         .animate-pulse {
+             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+         }
+         @keyframes pulse {
+             0%, 100% { opacity: 1; }
+             50% { opacity: .5; }
+         }
+         @keyframes slideOut {
+             to {
+                 transform: translateX(400px);
+                 opacity: 0;
+             }
+         }
+     `;
+     document.head.appendChild(style);
+ 
+     // Listen for DataTable reload event from Socket.IO
+     $(document).on('datatable:reload', function() {
+         if ($.fn.DataTable) {
+             const table = $('#ridersTable').DataTable();
+             if (table) {
+                 table.ajax.reload();
+             }
+         }
+     });
+ 

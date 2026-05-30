@@ -53,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname || '';
         if (path.startsWith('/admin') || path.startsWith('/staff')) {
             console.log('[Socket.IO] db:changed', payload);
-            window.location.reload();
+            // Trigger custom event to reload DataTables without full page refresh
+            $(document).trigger('datatable:reload');
         }
     });
 
