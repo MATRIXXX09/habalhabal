@@ -28,6 +28,20 @@ class ApiBookingController extends AbstractController
             return $this->json(['success' => false, 'message' => 'Authentication required'], Response::HTTP_UNAUTHORIZED);
         }
 
+        $customer = null;
+        if ($user->getId() !== null) {
+            $customer = $entityManager->getRepository(User::class)->find($user->getId());
+        }
+
+        if (!$customer && $user->getEmail()) {
+            $customer = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+        }
+
+        if (!$customer) {
+            error_log('ApiBookingController create exception: authenticated user not found in DB, id=' . ($user->getId() ?? 'null') . ', email=' . ($user->getEmail() ?? 'null'));
+            return $this->json(['success' => false, 'message' => 'Authenticated user not found'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         $data = json_decode($request->getContent(), true);
         if (!is_array($data)) {
             return $this->json(['success' => false, 'message' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
@@ -54,8 +68,8 @@ class ApiBookingController extends AbstractController
         }
 
         $booking = new Booking();
-        $booking->setCustomer($user);
-        $booking->setCreatedBy($user);
+        $booking->setCustomer($customer);
+        $booking->setCreatedBy($customer);
         $booking->setStatus('pending');
         $booking->setBookingType((string) $bookingType);
         $booking->setPickupAddress((string) $pickupAddress);
