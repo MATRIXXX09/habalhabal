@@ -59,7 +59,12 @@ class ApiBookingController extends AbstractController
         $booking->setEstimatedFare(isset($data['estimatedFare']) && $data['estimatedFare'] !== '' ? (float) $data['estimatedFare'] : null);
 
         try {
-            $booking->setRequestedPickupTime(new \DateTime((string) $data['requestedPickupTime']));
+            if (!empty($data['requestedPickupTime'])) {
+                $booking->setRequestedPickupTime(new \DateTime((string) $data['requestedPickupTime']));
+            } else {
+                $booking->setRequestedPickupTime(new \DateTime());
+            }
+
             if (!empty($data['requestedDeliveryTime'])) {
                 $booking->setRequestedDeliveryTime(new \DateTime((string) $data['requestedDeliveryTime']));
             }
