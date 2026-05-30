@@ -52,7 +52,7 @@ class ApiBookingController extends AbstractController
 
         if (!$customer) {
             error_log('ApiBookingController create notice: creating booking without persisted customer for habal-habal booking');
-        }
+        }   
         if (!is_array($data)) {
             return $this->json(['success' => false, 'message' => 'Invalid JSON payload'], Response::HTTP_BAD_REQUEST);
         }
@@ -126,6 +126,11 @@ class ApiBookingController extends AbstractController
             $entityManager->flush();
         } catch (\Throwable $e) {
             error_log('ApiBookingController create exception: ' . $e->getMessage());
+            error_log('Exception class: ' . get_class($e));
+            error_log('Stack trace: ' . $e->getTraceAsString());
+            if ($e->getPrevious()) {
+                error_log('Previous exception: ' . $e->getPrevious()->getMessage());
+            }
             return $this->json(['success' => false, 'message' => 'Unable to create booking'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -168,5 +173,88 @@ class ApiBookingController extends AbstractController
         }
 
         return new \DateTime((string) $value);
+    }
+
+    #[Route('/api/bookings/active', name: 'api_bookings_active', methods: ['GET'])]
+    public function getActiveBookings(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] ?User $user,
+    ): JsonResponse {
+        if (!$user) {
+            return $this->json(['success' => false, 'message' => 'Authentication required'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        try {
+            $bookings = $entityManager->getRepository(Booking::class)->findBy(
+                ['customer' => $user, 'status' => ['pending', 'accepted', 'in_progress']],
+                ['createdAt' => 'DESC']
+            );
+
+            $data = [];
+            foreach ($bookings as $booking) {
+                $data[] = [
+                    'id' => $booking->getId(),
+                    'booking_type' => $booking->getBookingType(),
+                    'pickup_address' => $booking->getPickupAddress(),
+                    'delivery_address' => $booking->getDeliveryAddress(),
+                    'parcel_description' => $booking->getParcelDescription(),
+                    'estimated_fare' => $booking->getEstimatedFare(),
+                    'status' => $booking->getStatus(),
+                    'requested_pickup_time' => $booking->getRequestedPickupTime()?->format('Y-m-d H:i:s'),
+                    'estimated_duration' => $booking->getEstimatedDuration(),
+                    'created_at' => $booking->getCreatedAt()?->format('Y-m-d H:i:s'),
+                ];
+            }
+
+            return $this->json([
+                'success' => true,
+                'data' => $data,
+                'count' => count($data),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('ApiBookingController getActiveBookings exception: ' . $e->getMessage());
+            return $this->json(['success' => false, 'message' => 'Failed to fetch bookings'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/api/bookings/completed', name: 'api_bookings_completed', methods: ['GET'])]
+    public function getCompletedBookings(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] ?User $user,
+    ): JsonResponse {
+        if (!$user) {
+            return $this->json(['success' => false, 'message' => 'Authentication required'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        try {
+            $bookings = $entityManager->getRepository(Booking::class)->findBy(
+                ['customer' => $user, 'status' => ['completed', 'cancelled']],
+                ['updatedAt' => 'DESC']
+            );
+
+            $data = [];
+            foreach ($bookings as $booking) {
+                $data[] = [
+                    'id' => $booking->getId(),
+                    'booking_type' => $booking->getBookingType(),
+                    'pickup_address' => $booking->getPickupAddress(),
+                    'delivery_address' => $booking->getDeliveryAddress(),
+                    'parcel_description' => $booking->getParcelDescription(),
+                    'estimated_fare' => $booking->getEstimatedFare(),
+                    'status' => $booking->getStatus(),
+                    'created_at' => $booking->getCreatedAt()?->format('Y-m-d H:i:s'),
+                    'updated_at' => $booking->getUpdatedAt()?->format('Y-m-d H:i:s'),
+                ];
+            }
+
+            return $this->json([
+                'success' => true,
+                'data' => $data,
+                'count' => count($data),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('ApiBookingController getCompletedBookings exception: ' . $e->getMessage());
+            return $this->json(['success' => false, 'message' => 'Failed to fetch bookings'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
