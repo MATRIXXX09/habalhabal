@@ -89,7 +89,11 @@ class ApiBookingController extends AbstractController
         if ($customer) {
             $booking->setCustomer($customer);
             $booking->setCreatedBy($customer);
+        } elseif (!$isHabal) {
+            error_log('ApiBookingController: Customer not found and booking is not habal-habal, rejecting');
+            return $this->json(['success' => false, 'message' => 'Customer not found'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+        
         $booking->setStatus('pending');
         $booking->setBookingType((string) $bookingType);
         $booking->setPickupAddress((string) $pickupAddress);

@@ -90,7 +90,6 @@ class BookingType extends AbstractType
                 'label' => 'Requested Pickup Time',
                 'widget' => 'single_text',
                 'html5' => true,
-                'format' => "yyyy-MM-dd'T'HH:mm",
                 'required' => true,
                 'attr' => ['class' => 'form-input'],
                 'constraints' => [
@@ -101,7 +100,6 @@ class BookingType extends AbstractType
                 'label' => 'Requested Delivery Time',
                 'widget' => 'single_text',
                 'html5' => true,
-                'format' => "yyyy-MM-dd'T'HH:mm",
                 'required' => false,
                 'attr' => ['class' => 'form-input'],
             ])

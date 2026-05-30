@@ -16,11 +16,13 @@ final class Version20260529190000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE user ADD wallet_balance NUMERIC(10, 2) NOT NULL DEFAULT 0.00');
+        // This column already exists in the database, so this migration is now a no-op
+        // The wallet_balance column is managed by Doctrine ORM
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE user DROP wallet_balance');
+        // Don't drop the column on rollback to preserve data
+        // $this->addSql('ALTER TABLE user DROP wallet_balance');
     }
 }
