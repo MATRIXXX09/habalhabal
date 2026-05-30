@@ -131,6 +131,16 @@
             } else {
                 console.error('DataTables not loaded!');
             }
+
+            // Listen for DataTable reload event from Socket.IO
+            $(document).on('datatable:reload', function() {
+                if ($.fn.DataTable) {
+                    const table = $('#usersTable').DataTable();
+                    if (table) {
+                        table.ajax.reload();
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}

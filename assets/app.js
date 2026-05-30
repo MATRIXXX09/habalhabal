@@ -30,8 +30,7 @@ function escapeHtml(value) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const usersTable = document.getElementById('usersTable');
-    if (!usersTable || typeof io !== 'function') {
+    if (typeof io !== 'function') {
         return;
     }
 
@@ -53,8 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname || '';
         if (path.startsWith('/admin') || path.startsWith('/staff')) {
             console.log('[Socket.IO] db:changed', payload);
-            // Trigger custom event to reload DataTables without full page refresh
-            $(document).trigger('datatable:reload');
+            // Check if page has a DataTable that was initialized
+            if (typeof $.fn.DataTable !== 'undefined') {
+                const $table = $('table[id$="Table"]').first();
+                if ($table.length && $.fn.DataTable.isDataTable($table)) {
+                    // Trigger custom event to reload DataTables without full page refresh
+                    $(document).trigger('datatable:reload');
+                } else {
+                    // For pages with plain HTML tables, reload the page
+                    window.location.reload();
+                }
+            } else {
+                // jQuery DataTables not loaded, reload the page
+                window.location.reload();
+            }
         }
     });
 

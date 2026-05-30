@@ -7,6 +7,7 @@ use App\Entity\Rider;
 use App\Form\VehicleType;
 use App\Repository\VehicleRepository;
 use App\Repository\RiderRepository;
+use App\Service\RealtimeBroadcaster;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ class AdminVehicleController extends AbstractController
     }
 
     #[Route('/new', name: 'app_admin_vehicles_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, RiderRepository $riderRepository, VehicleRepository $vehicleRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, RiderRepository $riderRepository, VehicleRepository $vehicleRepository, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $vehicle = new Vehicle();
         $riders = $riderRepository->findAll();
@@ -65,6 +66,11 @@ class AdminVehicleController extends AbstractController
             
             $entityManager->persist($vehicle);
             $entityManager->flush();
+            
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'admin-vehicle-create',
+                'vehicleId' => $vehicle->getId(),
+            ]);
 
             $this->addFlash('success', 'Vehicle added successfully!');
             return $this->redirectToRoute('app_admin_vehicles');
@@ -78,7 +84,7 @@ class AdminVehicleController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_admin_vehicles_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Vehicle $vehicle, EntityManagerInterface $entityManager, RiderRepository $riderRepository): Response
+    public function edit(Request $request, Vehicle $vehicle, EntityManagerInterface $entityManager, RiderRepository $riderRepository, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         $riders = $riderRepository->findAll();
         
@@ -113,6 +119,11 @@ class AdminVehicleController extends AbstractController
             }
             
             $entityManager->flush();
+            
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'admin-vehicle-edit',
+                'vehicleId' => $vehicle->getId(),
+            ]);
 
             $this->addFlash('success', 'Vehicle updated successfully!');
             return $this->redirectToRoute('app_admin_vehicles');
@@ -126,11 +137,15 @@ class AdminVehicleController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_admin_vehicles_delete', methods: ['POST'])]
-    public function delete(Request $request, Vehicle $vehicle, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Vehicle $vehicle, EntityManagerInterface $entityManager, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         if ($this->isCsrfTokenValid('delete'.$vehicle->getId(), $request->request->get('_token'))) {
             $entityManager->remove($vehicle);
             $entityManager->flush();
+            $realtimeBroadcaster->broadcastDatabaseChanged([
+                'source' => 'admin-vehicle-delete',
+                'vehicleId' => $vehicle->getId(),
+            ]);
             $this->addFlash('success', 'Vehicle deleted successfully!');
         }
 

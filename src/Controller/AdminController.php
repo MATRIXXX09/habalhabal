@@ -314,7 +314,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/bookings/{id}/status', name: 'app_admin_booking_status_update', methods: ['POST'])]
-    public function updateBookingStatus(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
+    public function updateBookingStatus(Request $request, Booking $booking, EntityManagerInterface $entityManager, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         if (!$this->isCsrfTokenValid('booking_status_' . $booking->getId(), $request->request->get('_token'))) {
             if ($request->isXmlHttpRequest()) {
@@ -340,6 +340,11 @@ class AdminController extends AbstractController
         $booking->setStatus($status);
         $booking->setUpdatedAt(new \DateTime());
         $entityManager->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'admin-booking-status',
+            'bookingId' => $booking->getId(),
+            'status' => $status,
+        ]);
 
         if ($request->isXmlHttpRequest()) {
             return $this->json([
@@ -356,7 +361,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/bookings/{id}/delete', name: 'app_admin_booking_delete', methods: ['POST'])]
-    public function deleteBooking(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
+    public function deleteBooking(Request $request, Booking $booking, EntityManagerInterface $entityManager, RealtimeBroadcaster $realtimeBroadcaster): Response
     {
         if (!$this->isCsrfTokenValid('booking_delete_' . $booking->getId(), $request->request->get('_token'))) {
             if ($request->isXmlHttpRequest()) {
@@ -369,6 +374,10 @@ class AdminController extends AbstractController
 
         $entityManager->remove($booking);
         $entityManager->flush();
+        $realtimeBroadcaster->broadcastDatabaseChanged([
+            'source' => 'admin-booking-delete',
+            'bookingId' => $booking->getId(),
+        ]);
 
         if ($request->isXmlHttpRequest()) {
             return $this->json([
